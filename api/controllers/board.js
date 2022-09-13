@@ -1,10 +1,8 @@
 const Board = require("../models/Board");
-const Joi = require("joi");
-const boardValidation = require("../validations/bordValidation");
 const httpStatus = require("http-status");
 
-// getBoards
-const getBoards = async (req, res) => {
+// getAllBoard
+const getAllBoard = async (req, res) => {
   const boards = await Board.find({});
   // return data
   return res.status(httpStatus.OK).json({ boards });
@@ -35,8 +33,28 @@ const updateBoard = async (req, res) => {
     );
 };
 
+// deleteBoard
+const deleteBoard = async (req, res) => {
+  if (!req.params?.id) {
+    return res.status(httpStatus.BAD_REQUEST).json({
+      message: "id is required",
+    });
+  }
+
+  return Board.findByIdAndDelete(req.params.id, { new: true })
+    .then((response) => {
+      res.status(httpStatus.OK).json(response);
+    })
+    .catch((e) => {
+      res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({ error: "something went wrong" });
+    });
+};
+
 module.exports = {
-  getBoards,
+  getAllBoard,
   createBoard,
   updateBoard,
+  deleteBoard,
 };

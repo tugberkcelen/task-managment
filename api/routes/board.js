@@ -2,7 +2,12 @@ const express = require("express");
 const validate = require("../middlewares/validate");
 const schemas = require("../validations/bordValidation");
 const router = express.Router();
-const { createBoard, getBoards, updateBoard } = require("../controllers/board");
+const {
+  createBoard,
+  getAllBoard,
+  updateBoard,
+  deleteBoard,
+} = require("../controllers/board");
 
 console.log("test");
 
@@ -14,7 +19,7 @@ router.post(
 );
 
 // getBoards
-router.get("/getBoard", getBoards);
+router.get("/getAllBoard", getAllBoard);
 
 // updateBoardById
 router.patch(
@@ -22,5 +27,8 @@ router.patch(
   validate(schemas.updateBoardValidation),
   updateBoard
 );
+
+// deleteBoard
+router.delete("/deleteBoardById/:id", deleteBoard);
 
 module.exports = router;
