@@ -4,7 +4,6 @@ const boardValidation = require("../validations/bordValidation");
 const httpStatus = require("http-status");
 
 // getBoards
-
 const getBoards = async (req, res) => {
   const boards = await Board.find({});
   // return data
@@ -13,22 +12,31 @@ const getBoards = async (req, res) => {
 
 // createBoard
 const createBoard = async (req, res) => {
-  // req.body validate
-  const { error, value } = boardValidation.boardSchema.validate(req.body);
+  const board = new Board(req.body);
+  board.save();
+  return res.status(httpStatus.CREATED).json(board);
+};
 
-  if (error) {
-    // error
-    const { details } = error;
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ error: details });
-  } else {
-    // saving
-    const result = new Board(value);
-    res.status(httpStatus.CREATED).json({ result });
-    return result.save();
+// updateBoard
+const updateBoard = async (req, res) => {
+  if (!req.params?.id) {
+    return res.status(httpStatus.BAD_REQUEST).json({
+      message: "id is required",
+    });
   }
+  return Board.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    .then((response) => {
+      res.status(httpStatus.OK).json(response);
+    })
+    .catch((e) =>
+      res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({ error: "something went wrong" })
+    );
 };
 
 module.exports = {
   getBoards,
   createBoard,
+  updateBoard,
 };
