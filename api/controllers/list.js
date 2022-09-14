@@ -10,8 +10,14 @@ const getAllList = async (req, res) => {
 // createList
 const createList = async (req, res) => {
   const list = new List(req.body);
-  list.save();
-  return res.status(httpStatus.CREATED).json(list);
+  list
+    .save()
+    .then((response) => {
+      res.status(httpStatus.CREATED).json(response);
+    })
+    .catch((e) => {
+      return res.status(httpStatus.BAD_REQUEST).json(e);
+    });
 };
 
 // updateList

@@ -11,8 +11,14 @@ const getAllBoard = async (req, res) => {
 // createBoard
 const createBoard = async (req, res) => {
   const board = new Board(req.body);
-  board.save();
-  return res.status(httpStatus.CREATED).json(board);
+  board
+    .save()
+    .then((response) => {
+      res.status(httpStatus.CREATED).json(response);
+    })
+    .catch((e) => {
+      return res.status(httpStatus.BAD_REQUEST).json(e);
+    });
 };
 
 // updateBoard
