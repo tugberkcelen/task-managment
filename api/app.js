@@ -15,9 +15,11 @@ app.use(helmet());
 app.use(cors());
 
 const boardRoute = require("./routes/board");
+const listRoute = require("./routes/list");
 
 // routes
 app.use("/api/board", boardRoute);
+app.use("/api/list", listRoute);
 
 // mongoose
 app.listen(process.env.APP_PORT, () => {

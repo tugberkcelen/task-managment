@@ -2,9 +2,9 @@ const Mongoose = require("mongoose");
 
 const listSchema = new Mongoose.Schema(
   {
-    name: "",
-    desc: "",
-    idBoard: "",
+    name: { type: String },
+    desc: { type: String },
+    idBoard: { type: Mongoose.Types.ObjectId },
   },
   { versionKey: false, timestamps: true }
 );

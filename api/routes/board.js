@@ -9,8 +9,6 @@ const {
   deleteBoard,
 } = require("../controllers/board");
 
-console.log("test");
-
 // createBoard
 router.post(
   "/createBoard",
@@ -18,7 +16,7 @@ router.post(
   createBoard
 );
 
-// getBoards
+// getAllBoard
 router.get("/getAllBoard", getAllBoard);
 
 // updateBoardById
@@ -28,7 +26,7 @@ router.patch(
   updateBoard
 );
 
-// deleteBoard
+// deleteBoardById
 router.delete("/deleteBoardById/:id", deleteBoard);
 
 module.exports = router;
