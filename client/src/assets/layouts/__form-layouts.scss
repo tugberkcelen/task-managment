@@ -1,0 +1,47 @@
+.form {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 20px;
+    row-gap: 10px;
+}
+
+.form-group {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 20px;
+
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+}
+
+.half {
+    width: calc(50% - 20px);
+    display: flex;
+    gap: 20px;
+
+
+}
+
+.form-title {
+    margin-bottom: 50px;
+}
+
+.form-group,
+.half {
+    .text-field__wrapper {
+        width: 100%;
+    }
+
+    .date-field__wrapper {
+        width: 100%;
+    }
+}

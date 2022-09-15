@@ -1,0 +1,72 @@
+.text-field {
+    &__input {
+        display: flex;
+        flex-direction: column;
+        border: 2px solid var(--borderColor);
+        position: relative;
+        margin-bottom: 1rem;
+        align-items: center;
+        border-radius: 4px;
+
+        fieldset {
+            position: absolute;
+            left: 0;
+        }
+
+        legend {
+            text-align: left;
+            padding: 0;
+        }
+
+        .input-label {
+            position: absolute;
+            font-size: 0.825rem;
+            left: 10px;
+            top: 12px;
+            transition: 0.3s all ease;
+        }
+
+        input {
+            border: 0;
+            outline: 0;
+            width: 100%;
+            height: 100%;
+            padding: 8px 10px;
+            min-height: 40px;
+            box-sizing: border-box;
+            color: transparent;
+
+            &:focus {
+                +label {
+                    color: var(--primary);
+                    left: 10px;
+                    top: -8px;
+                    background: #fff;
+                    padding: 0 10px;
+                    font-weight: 500;
+                }
+
+                color: inherit;
+            }
+        }
+
+
+    }
+
+    &__slot {
+        width: 100%;
+    }
+}
+
+.t-text__field {
+    label {
+        left: 10px !important;
+        top: -8px !important;
+        background: #fff;
+        padding: 0 10px;
+    }
+
+    input {
+        color: inherit
+    }
+}

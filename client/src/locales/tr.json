@@ -1,0 +1,26 @@
+{
+    "home":{
+        "pageTitle":"Merhaba, Shipentegra Task'a Hoş geldiniz",
+        "boxsContent0":{
+            "title":"Hızlı Board Ekle",
+            "content":"Bu alandan boardları ekleyebilirsiniz",
+            "slug":"/boards/list",
+            "buttonText":"Ekle"
+        },
+        "boxsContent1":{
+            "title":"Boardları Listele",
+            "content":"Bu alandan boardları listeyebilirsiniz",
+            "slug":"/",
+            "buttonText":"Listele"
+        },
+        "boxsContent2":{
+            "title":"Hızlı Todo Ekle",
+            "content":"Bu alandan todo ekleyebilirsiniz",
+            "slug":"/",
+            "buttonText":"Listele"
+        }
+    },
+    "boardslist":{
+        "pageTitle":"Panolar"
+    }
+}

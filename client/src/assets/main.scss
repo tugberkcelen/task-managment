@@ -1,0 +1,29 @@
+@import "./reset";
+@import "./variables";
+@import "./components/textfield";
+@import "./components/t-btn";
+@import "./components/t-radio";
+@import "./layouts/_form-layouts";
+@import "./pages/login";
+
+body {
+    font-size: 15px;
+    font-family: $body-font;
+    color: rgba(var(--body-color));
+}
+
+#app-wrapper {
+    display: flex;
+    background: var(--appBg);
+}
+
+.main-app {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#router-view-wrapper {
+    padding: 1rem 1.8rem;
+
+}

@@ -1,0 +1,80 @@
+.t-radio {
+    &__wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        &:hover {
+            .t-radio__comp {
+                opacity: 1;
+            }
+        }
+    }
+
+    &__type {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #c1c1c1;
+        border-radius: 50%;
+        position: relative;
+        transition: 0.3s all ease;
+        z-index: 198;
+        right: 0;
+        top: 0;
+
+        &::after {
+            content: "";
+            width: 10px;
+            height: 10px;
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            z-index: 201;
+            background: var(--primary);
+            border-radius: 50%;
+            z-index: 5;
+            opacity: 0;
+            transition: 0.3s all ease;
+        }
+    }
+
+    &__hidden {
+        position: absolute;
+        left: -9px;
+        top: 12px;
+        width: 34px;
+        height: 34px;
+        opacity: 0;
+        z-index: 200;
+    }
+
+    &__comp {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--borderColor);
+        position: absolute;
+        top: 12px;
+        left: -6px;
+        opacity: 0;
+        transition: 0.3s all ease;
+    }
+
+    &__label {
+        margin-left: 15px;
+    }
+}
+
+.t-radio__hidden:checked~.t-radio__type {
+    border-color: var(--primary);
+}
+
+.t-radio__hidden:checked~.t-radio__type::after {
+    opacity: 1;
+}
+
+.t-radio__hidden:checked~.t-radio__comp {
+    background: var(--primary);
+    opacity: 0.3;
+}
