@@ -25,5 +25,11 @@ body {
 
 #router-view-wrapper {
     padding: 1rem 1.8rem;
+    height: 100%;
+}
 
+.no-data {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

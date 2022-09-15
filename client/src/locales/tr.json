@@ -1,6 +1,6 @@
 {
     "home":{
-        "pageTitle":"Merhaba, Shipentegra Task'a Hoş geldiniz",
+        "PageHeader":"Merhaba, Shipentegra Task'a Hoş geldiniz",
         "boxsContent0":{
             "title":"Hızlı Board Ekle",
             "content":"Bu alandan boardları ekleyebilirsiniz",
@@ -21,6 +21,8 @@
         }
     },
     "boardslist":{
-        "pageTitle":"Panolar"
+        "PageHeader":"Panolar",
+        "pageHeaderButton":"Pano Ekle",
+        "nodatacontent":"Şuan pano yok hemen aşşağıdan pano ekleyebilirsiniz"
     }
 }

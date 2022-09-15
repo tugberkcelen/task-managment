@@ -1,5 +1,5 @@
 <script>
-import TBtn from "../components/FormComponents/T-Btn.vue";
+import TBtn from "@/components/FormComponents/T-Btn.vue";
 
 export default {
   name: "QuickBox",

@@ -1,11 +1,11 @@
 <script>
-import PageTitle from "@/components/shared/PageTitle.vue";
+import PageHeader from "@/components/shared/PageHeader.vue";
 import QuickBox from "@/components/QuickBox.vue";
 export default {
   name: "HomeView",
 
   components: {
-    PageTitle,
+    PageHeader,
     QuickBox,
   },
 
@@ -38,7 +38,7 @@ export default {
 
 <template>
   <div class="home-page-view">
-    <PageTitle :title="$t(`home.pageTitle`)" />
+    <PageHeader :title="$t(`home.PageHeader`)" />
     <QuickBox :boxsContent="boxsContent" />
   </div>
 </template>
