@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import "./assets/main.scss";
+import "../public/fontawesome5/css/all.min.css";
 import i18n from "./plugins/i18n";
 
 const app = createApp(App);
