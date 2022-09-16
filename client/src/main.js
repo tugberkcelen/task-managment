@@ -14,6 +14,18 @@ const opt = {
       secondary: "#1a2f4e",
       borderColor: "#f2f2f2",
       appBg: "#f4f5f5",
+
+      errorRgb: "#ffe0e3",
+      error: "#ff4858",
+
+      successRgb: "#c3f3d7",
+      success: "#41ba73",
+
+      informationRgb: "#4a8cff1f",
+      information: "#4a8cff",
+
+      warningRgb: "#fef7ea",
+      warning: "#ee9500",
     },
   },
 };

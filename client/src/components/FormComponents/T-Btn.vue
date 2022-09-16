@@ -15,12 +15,27 @@ export default {
       required: false,
       default: "filled",
     },
+    width: {
+      required: false,
+    },
+    height: {
+      required: false,
+    },
   },
 };
 </script>
 
 <template>
-  <button type="submit" :class="(styled, color)" class="t-btn">
+  <button
+    :style="{
+      'border-color': `var(--${color})`,
+      width: width + 'px',
+      height: height + 'px',
+    }"
+    type="submit"
+    :class="color"
+    class="t-btn"
+  >
     <slot></slot>
   </button>
 </template>

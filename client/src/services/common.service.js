@@ -17,3 +17,21 @@ export const createBoard = (payload) => {
     })
     .catch((err) => [err]);
 };
+
+export const updateBoardById = (payload) => {
+  return axios
+    .patch(`/board/updateBoardById/${payload._id}`, payload)
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => [err]);
+};
+
+export const deleteBoardById = (payload) => {
+  return axios
+    .delete(`board/deleteBoardById/${payload._id}`)
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => [err]);
+};

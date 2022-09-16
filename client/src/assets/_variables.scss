@@ -9,6 +9,38 @@ $body-font: 'Poppins', sans-serif;
     background: var(--secondary);
 }
 
+.errorRgb {
+    background: var(--errorRgb);
+}
+
+.error {
+    background: var(--error);
+}
+
+.successRgb {
+    background: var(--successRgb);
+}
+
+.success {
+    background: var(--success);
+}
+
+.informationRgb {
+    background: var(--informationRgb);
+}
+
+.information {
+    background: var(--information);
+}
+
+.warningRgb {
+    background: var(--warningRgb);
+}
+
+.warning {
+    background: var(--warning);
+}
+
 .white {
     background-color: #fff;
 }
@@ -55,4 +87,18 @@ h6 {
 button,
 input {
     font-family: inherit;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.dual-button {
+    display: flex;
+    gap: 20px;
+
+    &.justify-content-center {
+        justify-content: center;
+    }
+
 }

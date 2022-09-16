@@ -4,7 +4,12 @@ import TBtn from "@/components/FormComponents/T-Btn.vue";
 import TextField from "@/components/FormComponents/TextField.vue";
 import NoDataContent from "@/components/shared/NoDataContent.vue";
 import Dialog from "@/components/shared/Dialog.vue";
-import { fetchBoards, createBoard } from "@/services/common.service.js";
+import {
+  fetchBoards,
+  createBoard,
+  updateBoardById,
+  deleteBoardById,
+} from "@/services/common.service.js";
 export default {
   name: "BoardsListView",
 
@@ -15,7 +20,10 @@ export default {
         name: "",
         desc: "",
       },
+
       boardDialog: false,
+      deleteBoardDialog: false,
+      createOrUpdateOrDelete: "",
     };
   },
 
@@ -28,26 +36,66 @@ export default {
   },
 
   methods: {
+    // fetchBoards service
     async getAllBoards() {
-      // fetchBoards service
       this.boards = await fetchBoards();
     },
 
-    async createBoard() {
-      // createBoard service
-      await createBoard(this.board);
-      this.getAllBoards();
-      this.popupClosed();
-    },
-
-    popupClosed() {
-      // Popup closed & board form clear
-      this.boardDialog = false;
+    // createBoard popup
+    popupOpen() {
+      this.createOrUpdateOrDelete = "create";
+      this.boardDialog = true;
       this.board.name = "";
       this.board.desc = "";
     },
+
+    // createBoard service
+    async createOrUpdateBoard() {
+      if (this.createOrUpdateOrDelete == "create") {
+        await createBoard(this.board);
+        this.popupClosed();
+      } else if (this.createOrUpdateOrDelete == "update") {
+        await updateBoardById(this.board);
+        this.popupClosed();
+      } else {
+        await deleteBoardById(this.board);
+        this.popupClosed();
+      }
+    },
+
+    // Popup closed & board form clear
+    async popupClosed() {
+      this.boardDialog = false;
+      this.deleteBoardDialog = false;
+      if (this.createOrUpdateOrDelete == "create") {
+        this.board.name = "";
+        this.board.desc = "";
+      }
+      this.boards = await fetchBoards();
+    },
+
+    // Edit board
+    editBoard(board) {
+      this.board = board;
+      this.createOrUpdateOrDelete = "update";
+      this.boardDialog = true;
+    },
+
+    // deleteBoardDialog
+    deleteBoardDialogFunc(board) {
+      this.board = board;
+      this.createOrUpdateOrDelete = "delete";
+      this.deleteBoardDialog = true;
+    },
+
+    // cancelDeleteBoard
+    async cancelDeleteBoard() {
+      this.deleteBoardDialog = false;
+      this.boards = await fetchBoards();
+    },
   },
 
+  // Created getAllBoards
   async created() {
     this.getAllBoards();
   },
@@ -77,13 +125,46 @@ export default {
         <TBtn @click="popupClosed" styled="outlined" color="primary">
           Kapat
         </TBtn>
-        <TBtn @click="createBoard" styled="filled" color="primary"> Ekle </TBtn>
+        <TBtn
+          v-if="createOrUpdateOrDelete == 'create'"
+          @click="createBoard"
+          styled="filled"
+          color="primary"
+        >
+          Ekle
+        </TBtn>
+        <TBtn
+          v-else
+          @click="createOrUpdateBoard"
+          styled="filled"
+          color="primary"
+        >
+          Güncelle
+        </TBtn>
+      </template>
+    </Dialog>
+
+    <Dialog v-if="deleteBoardDialog" max-width="600">
+      <template #title>
+        <h4 class="text-center">
+          Panoyu Silmek İstediğinize <br />Emin misiniz ?
+        </h4>
+      </template>
+      <template #content>
+        <div class="dual-button justify-content-center">
+          <TBtn @click="cancelDeleteBoard" styled="outlined" color="primary">
+            İptal Et
+          </TBtn>
+          <TBtn @click="createOrUpdateBoard" styled="filled" color="primary">
+            Sil
+          </TBtn>
+        </div>
       </template>
     </Dialog>
 
     <PageHeader :title="$t(`boardslist.PageHeader`)">
       <template #pageHeaderButton>
-        <TBtn @click="boardDialog = true" color="primary">{{
+        <TBtn @click="popupOpen" color="primary">{{
           $t("boardslist.pageHeaderButton")
         }}</TBtn>
       </template>
@@ -91,10 +172,27 @@ export default {
     <!-- .boards-list-wrapper start -->
     <div class="boards-list-wrapper">
       <!-- .board-box start -->
-      <div v-for="board in boards" :key="board.id" class="board-box">
+      <div v-for="(board, key) in boards" :key="key" class="board-box">
         <h5>{{ board.name }}</h5>
         <p>{{ board.desc }}</p>
-        <div class="board-actions"></div>
+        <div class="board-actions">
+          <TBtn
+            @click="editBoard(board)"
+            width="40"
+            height="40"
+            color="information"
+          >
+            <i class="fad fa-edit"></i>
+          </TBtn>
+          <TBtn
+            @click="deleteBoardDialogFunc(board)"
+            width="40"
+            height="40"
+            color="error"
+          >
+            <i class="fad fa-trash-alt"></i>
+          </TBtn>
+        </div>
       </div>
       <!-- .board-box finish -->
     </div>
@@ -125,6 +223,11 @@ export default {
 
     .t-btn {
       margin-top: 25px;
+    }
+
+    .board-actions {
+      display: flex;
+      gap: 10px;
     }
   }
 }

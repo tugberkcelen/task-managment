@@ -31,6 +31,16 @@ export default {
     },
   },
 
+  mounted() {
+    const element = this.$el.querySelector(".text-field__slot");
+
+    if (this.modelValue !== "") {
+      element.classList.add("t-text__field");
+    } else {
+      element.classList.remove("t-text__field");
+    }
+  },
+
   methods: {
     inputClick(event) {
       this.$el.querySelector(".text-field__input").style.borderColor =

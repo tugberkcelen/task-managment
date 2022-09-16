@@ -7,6 +7,7 @@ const {
   getAllBoard,
   updateBoard,
   deleteBoard,
+  getSingleBoardById,
 } = require("../controllers/board");
 
 // createBoard
@@ -22,11 +23,14 @@ router.get("/getAllBoard", getAllBoard);
 // updateBoardById
 router.patch(
   "/updateBoardById/:id",
-  validate(schemas.updateBoardValidation),
+
   updateBoard
 );
 
 // deleteBoardById
 router.delete("/deleteBoardById/:id", deleteBoard);
+
+// getSingleBoardById
+router.get("/getSingleBoardById/:id", getSingleBoardById);
 
 module.exports = router;
