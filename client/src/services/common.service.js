@@ -8,3 +8,12 @@ export const fetchBoards = () => {
     })
     .catch((err) => [err]);
 };
+
+export const createBoard = (payload) => {
+  return axios
+    .post("/board/createBoard", payload)
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => [err]);
+};

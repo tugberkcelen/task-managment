@@ -8,7 +8,7 @@ export default {
 
   props: {
     type: {
-      required: true,
+      required: false,
       default: "text",
     },
 
@@ -22,11 +22,12 @@ export default {
       default: "",
     },
     modelValue: {
-      required: true,
+      required: false,
+      default: "",
     },
     required: {
-      default: "",
       required: false,
+      default: "",
     },
   },
 

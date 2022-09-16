@@ -1,14 +1,21 @@
 <script>
 import PageHeader from "@/components/shared/PageHeader.vue";
 import TBtn from "@/components/FormComponents/T-Btn.vue";
+import TextField from "@/components/FormComponents/TextField.vue";
 import NoDataContent from "@/components/shared/NoDataContent.vue";
-import { fetchBoards } from "@/services/common.service.js";
+import Dialog from "@/components/shared/Dialog.vue";
+import { fetchBoards, createBoard } from "@/services/common.service.js";
 export default {
   name: "BoardsListView",
 
   data() {
     return {
       boards: [],
+      board: {
+        name: "",
+        desc: "",
+      },
+      boardDialog: false,
     };
   },
 
@@ -16,12 +23,28 @@ export default {
     PageHeader,
     TBtn,
     NoDataContent,
+    Dialog,
+    TextField,
   },
 
   methods: {
     async getAllBoards() {
       // fetchBoards service
       this.boards = await fetchBoards();
+    },
+
+    async createBoard() {
+      // createBoard service
+      await createBoard(this.board);
+      this.getAllBoards();
+      this.popupClosed();
+    },
+
+    popupClosed() {
+      // Popup closed & board form clear
+      this.boardDialog = false;
+      this.board.name = "";
+      this.board.desc = "";
     },
   },
 
@@ -32,9 +55,37 @@ export default {
 </script>
 <template>
   <div v-if="boards.length > 0" class="boards-list-view">
+    <Dialog v-if="boardDialog" max-width="600">
+      <template #title>
+        <h4>Dialog</h4>
+      </template>
+      <template #content>
+        <form @submit.prevent="" class="form">
+          <div class="form-group">
+            <TextField v-model="board.name" label="Pano Adı" color="primary" />
+          </div>
+          <div class="form-group">
+            <TextField
+              v-model="board.desc"
+              label="Pano Açıklaması"
+              color="primary"
+            />
+          </div>
+        </form>
+      </template>
+      <template #footer>
+        <TBtn @click="popupClosed" styled="outlined" color="primary">
+          Kapat
+        </TBtn>
+        <TBtn @click="createBoard" styled="filled" color="primary"> Ekle </TBtn>
+      </template>
+    </Dialog>
+
     <PageHeader :title="$t(`boardslist.PageHeader`)">
       <template #pageHeaderButton>
-        <TBtn color="primary">{{ $t("boardslist.pageHeaderButton") }}</TBtn>
+        <TBtn @click="boardDialog = true" color="primary">{{
+          $t("boardslist.pageHeaderButton")
+        }}</TBtn>
       </template>
     </PageHeader>
     <!-- .boards-list-wrapper start -->
@@ -42,6 +93,8 @@ export default {
       <!-- .board-box start -->
       <div v-for="board in boards" :key="board.id" class="board-box">
         <h5>{{ board.name }}</h5>
+        <p>{{ board.desc }}</p>
+        <div class="board-actions"></div>
       </div>
       <!-- .board-box finish -->
     </div>

@@ -11,12 +11,16 @@ export default {
       required: false,
       default: "primary",
     },
+    styled: {
+      required: false,
+      default: "filled",
+    },
   },
 };
 </script>
 
 <template>
-  <button type="submit" :class="color" class="t-btn">
+  <button type="submit" :class="(styled, color)" class="t-btn">
     <slot></slot>
   </button>
 </template>

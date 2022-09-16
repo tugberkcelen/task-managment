@@ -10,7 +10,7 @@
         "boxsContent1":{
             "title":"Boardları Listele",
             "content":"Bu alandan boardları listeyebilirsiniz",
-            "slug":"/",
+            "slug":"/boards/list",
             "buttonText":"Listele"
         },
         "boxsContent2":{
