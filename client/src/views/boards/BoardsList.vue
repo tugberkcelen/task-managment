@@ -9,7 +9,7 @@ import {
   createBoard,
   updateBoardById,
   deleteBoardById,
-} from "@/services/common.service.js";
+} from "@/services/board.service.js";
 export default {
   name: "BoardsListView",
 
@@ -105,7 +105,7 @@ export default {
   <div v-if="boards.length > 0" class="boards-list-view">
     <Dialog v-if="boardDialog" max-width="600">
       <template #title>
-        <h4>Dialog</h4>
+        <h4>Pano Ekle</h4>
       </template>
       <template #content>
         <form @submit.prevent="" class="form">
@@ -172,7 +172,17 @@ export default {
     <!-- .boards-list-wrapper start -->
     <div class="boards-list-wrapper">
       <!-- .board-box start -->
-      <div v-for="(board, key) in boards" :key="key" class="board-box">
+      <div
+        @click="
+          $router.push({
+            name: 'board-details',
+            params: { id: board._id },
+          })
+        "
+        v-for="(board, key) in boards"
+        :key="key"
+        class="board-box"
+      >
         <h5>{{ board.name }}</h5>
         <p>{{ board.desc }}</p>
         <div class="board-actions">

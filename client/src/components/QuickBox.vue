@@ -24,7 +24,7 @@ export default {
     <div v-for="(box, index) in boxsContent" :key="index" class="quick-box">
       <h5>{{ $t(box.title) }}</h5>
       <p>{{ $t(box.content) }}</p>
-      <TBtn @click="this.$router.push($t(box.slug))" color="primary">
+      <TBtn @click="$router.push($t(box.slug))" color="primary">
         {{ $t(box.buttonText) }}
       </TBtn>
     </div>

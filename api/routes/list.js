@@ -7,6 +7,7 @@ const {
   getAllList,
   updateList,
   deleteList,
+  getSingleListByIdboard,
 } = require("../controllers/list");
 
 // createList
@@ -24,5 +25,8 @@ router.patch(
 
 // deleteListById
 router.delete("/deleteListById/:id", deleteList);
+
+// getSingleListByIdboard
+router.get("/getSingleListByIdboard/:id", getSingleListByIdboard);
 
 module.exports = router;

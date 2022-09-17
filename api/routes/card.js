@@ -7,6 +7,7 @@ const {
   getAllCard,
   updateCard,
   deleteCard,
+  getSingleCardByIdBoard,
 } = require("../controllers/card");
 
 // createCard
@@ -20,5 +21,8 @@ router.patch("/updateCardById/:id", updateCard);
 
 // deleteCard
 router.delete("/deleteCardById/:id", deleteCard);
+
+// getSingleCardByIdBoard
+router.get("/getSingleCardByIdBoard/:id", getSingleCardByIdBoard);
 
 module.exports = router;

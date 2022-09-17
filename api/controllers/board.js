@@ -1,5 +1,6 @@
 const Board = require("../models/Board");
 const httpStatus = require("http-status");
+const { createBoardForTrello } = require("../trelloServices/services");
 
 // getAllBoard
 const getAllBoard = async (req, res) => {
@@ -26,6 +27,7 @@ const createBoard = async (req, res) => {
   board
     .save()
     .then((response) => {
+      createBoardForTrello(req.body);
       res.status(httpStatus.CREATED).json(response);
     })
     .catch((e) => {

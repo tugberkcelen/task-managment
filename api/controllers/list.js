@@ -7,6 +7,19 @@ const getAllList = async (req, res) => {
   return res.status(httpStatus.OK).json({ lists });
 };
 
+// getSingleListByIdboard
+const getSingleListByIdboard = async (req, res) => {
+  await List.find({ idBoard: { $in: req.params.id } })
+    .then((response) => {
+      res.status(httpStatus.CREATED).json(response);
+    })
+    .catch((e) => {
+      res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({ error: "something went wrong" });
+    });
+};
+
 // createList
 const createList = async (req, res) => {
   const list = new List(req.body);
@@ -62,4 +75,5 @@ module.exports = {
   createList,
   updateList,
   deleteList,
+  getSingleListByIdboard,
 };

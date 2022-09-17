@@ -11,6 +11,7 @@ const cardSchema = new Mongoose.Schema(
       default: "low",
     },
     status: { type: Boolean },
+    idList: { type: Mongoose.Types.ObjectId },
     image: { type: String },
   },
   { versionKey: false, timestamps: true }

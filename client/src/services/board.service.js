@@ -35,3 +35,12 @@ export const deleteBoardById = (payload) => {
     })
     .catch((err) => [err]);
 };
+
+export const getSingleBoardById = (payload) => {
+  return axios
+    .get(`board/getSingleBoardById/${payload}`)
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => [err]);
+};

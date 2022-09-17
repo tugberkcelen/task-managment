@@ -32,6 +32,19 @@ const createCard = async (req, res) => {
   });
 };
 
+// getSingleCardByIdBoard
+const getSingleCardByIdBoard = async (req, res) => {
+  await Card.find({ idBoard: { $in: req.params.id } })
+    .then((response) => {
+      res.status(httpStatus.CREATED).json(response);
+    })
+    .catch((e) => {
+      res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({ error: "something went wrong" });
+    });
+};
+
 // updateCard
 const updateCard = async (req, res) => {
   const fileName =
@@ -71,4 +84,5 @@ module.exports = {
   createCard,
   updateCard,
   deleteCard,
+  getSingleCardByIdBoard,
 };

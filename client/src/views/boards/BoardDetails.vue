@@ -1,8 +1,522 @@
 <script>
+import { getSingleBoardById } from "@/services/board.service.js";
+import { getSingleListByIdboard } from "@/services/list.service.js";
+import {
+  getSingleCardByIdBoard,
+  createCard,
+  deleteCardById,
+  updateCardById,
+} from "@/services/card.service.js";
+import PageHeader from "@/components/shared/PageHeader.vue";
+import TBtn from "@/components/FormComponents/T-Btn.vue";
+import TextField from "@/components/FormComponents/TextField.vue";
+import TSelect from "@/components/FormComponents/T-Select.vue";
+import Badge from "@/components/shared/Badge.vue";
+import draggable from "vuedraggable";
+import Dialog from "@/components/shared/Dialog.vue";
+
 export default {
   name: "BoardDetailsView",
+
+  components: {
+    PageHeader,
+    Badge,
+    draggable,
+    TBtn,
+    Dialog,
+    TextField,
+    TSelect,
+  },
+
+  data() {
+    return {
+      board: {},
+      lists: [],
+      list: {
+        _id: "",
+      },
+      cards: [],
+      card: {
+        name: "",
+        desc: "",
+        importance: "low",
+        image: {
+          file: "",
+          preview: "",
+        },
+      },
+      addOrUpdateCardDialogPopup: false,
+      deleteCardDialog: false,
+      createOrUpdateOrDelete: "",
+      importances: [
+        {
+          key: "low",
+          value: "Düşük",
+        },
+        {
+          key: "middle",
+          value: "Orta",
+        },
+        {
+          key: "high",
+          value: "Yüksek",
+        },
+      ],
+    };
+  },
+
+  async created() {
+    await this.getSingleBoardById();
+    await this.getSingleListByIdboard();
+    await this.getSingleCardByIdBoard();
+  },
+
+  methods: {
+    // getSingleBoardById
+    async getSingleBoardById() {
+      this.board = await getSingleBoardById(this.$route.params.id);
+    },
+    // getSingleListByIdboard
+    async getSingleListByIdboard() {
+      this.lists = await getSingleListByIdboard(this.$route.params.id);
+    },
+    // getSingleCardByIdBoard
+    async getSingleCardByIdBoard() {
+      this.cards = await getSingleCardByIdBoard(this.$route.params.id);
+    },
+
+    // createCardPopup
+    createCardPopup(id) {
+      console.log("this.card", this.card);
+      this.createOrUpdateOrDelete = "create";
+      this.addOrUpdateCardDialogPopup = true;
+      this.list._id = id;
+      this.card.name = "";
+      this.card.desc = "";
+      this.card.idBoard = "";
+      this.card.importance = "low";
+      this.card.status = "";
+      this.card.idList = "";
+      this.card.image = {};
+      this.card.image["preview"] = "";
+      this.card.image["file"] = "";
+    },
+
+    onFileChange(event) {
+      this.card.image = {};
+      this.card.image["preview"] = "";
+      this.card.image["file"] = "";
+      this.card.image.preview = URL.createObjectURL(event.target.files[0]);
+      this.card.image.file = event.target.files[0];
+    },
+
+    // removeImage
+    removeImage() {
+      this.card.image.preview = "";
+      this.card.image.file = "";
+    },
+
+    //removeEditedImage
+    removeEditedImage() {
+      this.card.image = {};
+      this.card.image["preview"] = "";
+      this.card.image["file"] = "";
+    },
+
+    // createCard
+    async createCard() {
+      if (this.createOrUpdateOrDelete == "create") {
+        const data = new FormData();
+        data.append("name", this.card.name);
+        data.append("desc", this.card.desc);
+        data.append("idBoard", this.$route.params.id);
+        data.append("importance", this.card.importance);
+        data.append("status", true);
+        data.append("idList", this.list._id);
+        data.append("image", this.card.image.file);
+        await createCard(data);
+        this.popupClosed();
+      } else if (this.createOrUpdateOrDelete == "update") {
+        console.log("aaa", this.list);
+        const data = new FormData();
+        data.append("name", this.card.name);
+        data.append("desc", this.card.desc);
+        data.append("idBoard", this.$route.params.id);
+        data.append("importance", this.card.importance);
+        data.append("status", true);
+        data.append("idList", this.list._id);
+        data.append("image", this.card.image.file);
+        await updateCardById({ data: data, id: this.card._id });
+        this.popupClosed();
+      } else {
+        await deleteCardById(this.card);
+        this.popupClosed();
+      }
+    },
+
+    // popupClosed
+    async popupClosed() {
+      this.addOrUpdateCardDialogPopup = false;
+      this.deleteCardDialog = false;
+      if (this.createOrUpdateOrDelete == "create") {
+        this.card.name = "";
+        this.card.desc = "";
+        this.card.idBoard = "";
+        this.card.importance = "low";
+        this.card.status = "";
+        this.card.idList = "";
+        this.card.image.preview = "";
+        this.card.image.file = "";
+      }
+      await this.getSingleCardByIdBoard();
+    },
+
+    //editCard
+    editCard(payload) {
+      this.card = payload.card;
+      this.list._id = payload.list._id;
+      this.createOrUpdateOrDelete = "update";
+      this.addOrUpdateCardDialogPopup = true;
+    },
+
+    // deleteCardDialogFunc
+    deleteCardDialogFunc(card) {
+      this.card = card;
+      this.createOrUpdateOrDelete = "delete";
+      this.deleteCardDialog = true;
+    },
+
+    // cancelDeleteCard
+    async cancelDeleteCard() {
+      this.deleteCardDialog = false;
+      await getSingleCardByIdBoard();
+    },
+  },
 };
 </script>
 <template>
-  <div class="board-details-view"></div>
+  <div class="board-details-view">
+    <PageHeader :title="this.board.name" />
+    <Dialog
+      class="card-accepted-for-delete"
+      v-if="deleteCardDialog"
+      max-width="600"
+    >
+      <template #title>
+        <h4 class="text-center">
+          Kartı Silmek İstediğinize <br />Emin misiniz ?
+        </h4>
+      </template>
+      <template #content>
+        <div class="dual-button justify-content-center">
+          <TBtn @click="cancelDeleteCard" styled="outlined" color="primary">
+            İptal Et
+          </TBtn>
+          <TBtn @click="createCard" styled="filled" color="primary"> Sil </TBtn>
+        </div>
+      </template>
+    </Dialog>
+    <!-- .add-card-dialog start -->
+    <Dialog v-if="addOrUpdateCardDialogPopup" class="add-card-dialog">
+      <template #title>
+        <h4>Kart Ekle</h4>
+      </template>
+      <template #content>
+        <!-- .form-group start -->
+        <div class="form-group">
+          <TextField
+            type="text"
+            v-model="card.name"
+            label="Kart Adı"
+            color="primary"
+          />
+        </div>
+        <!-- .form-group finish -->
+        <!-- .form-group start -->
+        <div class="form-group">
+          <TextField
+            type="text"
+            v-model="card.desc"
+            label="Kart Açıklaması"
+            color="primary"
+          />
+        </div>
+        <!-- .form-group finish -->
+        <!-- .form-group start -->
+        <div class="form-group">
+          <TSelect
+            v-model="card.importance"
+            :items="importances"
+            color="primary"
+            label="Önem Durumu Seçiniz"
+          />
+        </div>
+        <!-- .form-group finish -->
+        <!-- .form-group start -->
+        <!--<div v-if="createOrUpdateOrDelete == 'update'" class="form-group">
+          <TSelect
+            v-model="card.idList"
+            :items="lists"
+            item-key="_id"
+            item-value="name"
+            color="primary"
+          />
+          <pre>
+          {{ lists }}
+        </pre
+          >
+        </div>-->
+        <!-- .form-group finish -->
+        <!-- .form-group start -->
+        <div class="form-group">
+          <TextField
+            type="file"
+            @change="onFileChange($event)"
+            ref="inputFile"
+            color="primary"
+            accept="image/*"
+          />
+          <!-- .form-group finish -->
+          <!-- .form-group start -->
+        </div>
+        <!-- .form-group finish -->
+
+        <!-- .form-group start -->
+        <div class="form-group">
+          <!-- .image-preview start -->
+          <div v-if="card.image.preview" class="image-preview">
+            <!-- .remove-image start -->
+            <TBtn
+              @click="removeImage"
+              class="remove-image"
+              width="30"
+              height="40"
+              color="error"
+            >
+              <i class="fad fa-trash-alt"></i>
+            </TBtn>
+            <!-- .remove-image finish -->
+            <img v-if="card.image.preview" :src="card.image.preview" alt="" />
+          </div>
+          <!-- .image-preview finish -->
+          <!-- .image-preview start -->
+          <div v-else-if="card.image.preview != ''" class="image-preview">
+            <!-- .remove-image start -->
+            <TBtn
+              @click="removeEditedImage"
+              class="remove-image"
+              width="30"
+              height="40"
+              color="error"
+            >
+              <i class="fad fa-trash-alt"></i>
+            </TBtn>
+            <!-- .remove-image finish -->
+            <img
+              v-if="card.image"
+              :src="`http://localhost:3000/uploads/cards/` + card.image"
+              :alt="card.name"
+            />
+          </div>
+          <!-- .image-preview finish -->
+        </div>
+      </template>
+      <template #footer>
+        <TBtn @click="popupClosed" styled="outlined" color="primary">
+          Kapat
+        </TBtn>
+        <TBtn
+          v-if="createOrUpdateOrDelete == 'create'"
+          @click="createCard"
+          styled="filled"
+          color="primary"
+        >
+          Ekle
+        </TBtn>
+        <TBtn v-else @click="createCard" styled="filled" color="primary">
+          Güncelle
+        </TBtn>
+      </template>
+    </Dialog>
+    <!-- .add-card-dialog finish -->
+    <!-- .list-wrapper start -->
+    <div class="list-wrapper">
+      <!-- .list-box start -->
+      <div
+        v-for="(list, index) in lists"
+        :key="index"
+        class="list-box"
+        :style="{ width: `calc(100% / ${lists.length})` }"
+      >
+        <h6 class="list-title">
+          {{ list.name }}
+        </h6>
+        <!-- .card-wrapper start -->
+        <div class="card-wrapper">
+          <!-- .card start -->
+          <template v-for="(card, index) in cards">
+            <div v-if="list._id == card.idList" :key="index" class="card-box">
+              <!-- .card-content start -->
+              <div class="card-content">
+                <h6>{{ card.name }}</h6>
+                <!-- .card-image start -->
+                <div class="card-image">
+                  <img
+                    :src="`http://localhost:3000/uploads/cards/` + card.image"
+                    :alt="card.name"
+                  />
+                </div>
+                <!-- .card-image finish -->
+                <p>{{ card.desc }}</p>
+              </div>
+              <!-- .card-content finish -->
+              <!-- .card-importance start -->
+              <div class="card-importance">
+                <Badge :text="card.importance" />
+              </div>
+              <!-- .card-importance finish -->
+              <!-- .card-footer start -->
+              <div class="card-footer">
+                <!-- .card-actions start -->
+                <div class="card-actions dual-button">
+                  <TBtn
+                    @click="editCard({ card: card, list: list })"
+                    width="35"
+                    height="35"
+                    color="information"
+                  >
+                    <i class="fad fa-edit"></i>
+                  </TBtn>
+                  <TBtn
+                    @click="deleteCardDialogFunc(card)"
+                    width="35"
+                    height="35"
+                    color="error"
+                  >
+                    <i class="fad fa-trash-alt"></i>
+                  </TBtn>
+                </div>
+                <!-- .card-actions finish -->
+                <!-- .date start -->
+                <span class="date">
+                  <i class="fad fa-calendar-week"></i>
+                  {{ $dayjs(card.createdAt).format("DD.MM.YYYY") }}
+                </span>
+                <!-- .date finish -->
+              </div>
+              <!-- .card-footer finish -->
+            </div>
+          </template>
+          <div
+            @click="createCardPopup(list._id)"
+            class="card-box card-new-item"
+          >
+            Kart Ekle
+          </div>
+          <!-- .card start -->
+        </div>
+        <!-- .card-wrapper finish -->
+      </div>
+      <!-- .list-box finish -->
+    </div>
+    <!-- .list-wrapper finish -->
+  </div>
 </template>
+
+<style lang="scss">
+.list-wrapper {
+  display: flex;
+  gap: 20px;
+
+  .list-box {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1rem;
+    box-sizing: border-box;
+    height: fit-content;
+
+    .list-title {
+      margin-bottom: 20px;
+    }
+  }
+}
+
+.card-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .card-box {
+    padding: 1rem;
+    border: 2px solid var(--borderColor);
+    background: var(--borderColor);
+    border-radius: 6px;
+    position: relative;
+
+    .card-image {
+      margin: 1rem 0;
+      img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+      }
+    }
+
+    &.card-new-item {
+      text-align: center;
+      border-style: dashed;
+      background: #fff;
+      font-weight: 600;
+      transition: 0.3s all ease;
+      cursor: pointer;
+
+      &:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+    }
+
+    .card-footer {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 2px solid #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .date {
+        font-size: 0.775rem;
+        font-weight: 500;
+      }
+    }
+
+    .card-importance {
+      position: absolute;
+      right: 20px;
+      top: 10px;
+    }
+  }
+}
+
+.image-preview {
+  width: 220px;
+  height: 220px;
+  border: 2px dashed var(--borderColor);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .remove-image {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+}
+</style>

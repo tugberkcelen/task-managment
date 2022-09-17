@@ -4,6 +4,7 @@ import router from "./router";
 import "./assets/main.scss";
 import "../public/fontawesome5/css/all.min.css";
 import i18n from "./plugins/i18n";
+import dayjs from "dayjs";
 
 const app = createApp(App);
 
@@ -31,6 +32,7 @@ const opt = {
 };
 
 app.config.globalProperties.$opt = opt;
+app.config.globalProperties.$dayjs = dayjs;
 
 app.use(router);
 app.use(i18n);
