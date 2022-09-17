@@ -1,5 +1,6 @@
 const List = require("../models/List");
 const httpStatus = require("http-status");
+const { createListOnBoardForTrello } = require("../trelloServices/services");
 
 // getAllList
 const getAllList = async (req, res) => {
@@ -22,13 +23,22 @@ const getSingleListByIdboard = async (req, res) => {
 
 // createList
 const createList = async (req, res) => {
-  const list = new List(req.body);
-  list
-    .save()
+  console.log("req.body", req.body);
+  await createListOnBoardForTrello(req.body)
     .then((response) => {
-      res.status(httpStatus.CREATED).json(response);
+      const data = { ...req.body, ...{ idListTrello: response.data.id } };
+      const list = new List(data);
+      list
+        .save()
+        .then((response) => {
+          res.status(httpStatus.CREATED).json(response);
+        })
+        .catch((e) => {
+          return res.status(httpStatus.BAD_REQUEST).json(e);
+        });
     })
     .catch((e) => {
+      console.log("e", e);
       return res.status(httpStatus.BAD_REQUEST).json(e);
     });
 };

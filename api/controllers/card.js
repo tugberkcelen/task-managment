@@ -1,6 +1,7 @@
 const Card = require("../models/Card");
 const httpStatus = require("http-status");
 const path = require("path");
+const { createNewCardForTrello } = require("../trelloServices/services");
 
 // getAllCard
 const getAllCard = async (req, res) => {
@@ -10,25 +11,27 @@ const getAllCard = async (req, res) => {
 
 // createCard
 const createCard = async (req, res) => {
-  const fileName =
-    Math.floor(Math.random() * 101) * Math.floor(Math.random() * 20) +
-    `${req?.files.image.name}`;
+  await createNewCardForTrello(req.body).then((response) => {
+    const fileName =
+      Math.floor(Math.random() * 101) * Math.floor(Math.random() * 20) +
+      `${req?.files.image.name}`;
 
-  const folderPath = path.join(__dirname, "../", "uploads/cards", fileName);
+    const folderPath = path.join(__dirname, "../", "uploads/cards", fileName);
 
-  const data = { ...req.body, ...{ image: fileName } };
+    const data = { ...req.body, ...{ image: fileName } };
 
-  req.files.image.mv(folderPath, (err) => {
-    if (err) return res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err);
-    const card = new Card(data);
-    card
-      .save()
-      .then((response) => {
-        res.status(httpStatus.OK).json(response);
-      })
-      .catch((e) => {
-        return res.status(httpStatus.BAD_REQUEST).json(e);
-      });
+    req.files.image.mv(folderPath, (err) => {
+      if (err) return res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err);
+      const card = new Card(data);
+      card
+        .save()
+        .then((response) => {
+          res.status(httpStatus.OK).json(response);
+        })
+        .catch((e) => {
+          return res.status(httpStatus.BAD_REQUEST).json(e);
+        });
+    });
   });
 };
 

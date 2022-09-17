@@ -23,12 +23,18 @@ const getSingleBoardById = async (req, res) => {
 
 // createBoard
 const createBoard = async (req, res) => {
-  const board = new Board(req.body);
-  board
-    .save()
+  await createBoardForTrello(req.body)
     .then((response) => {
-      createBoardForTrello(req.body);
-      res.status(httpStatus.CREATED).json(response);
+      const data = { ...req.body, ...{ idBoardTrello: response.data.id } };
+      const board = new Board(data);
+      board
+        .save()
+        .then((response) => {
+          return res.status(httpStatus.CREATED).json(response);
+        })
+        .catch((e) => {
+          return res.status(httpStatus.BAD_REQUEST).json(e);
+        });
     })
     .catch((e) => {
       return res.status(httpStatus.BAD_REQUEST).json(e);

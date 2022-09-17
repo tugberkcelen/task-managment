@@ -11,7 +11,7 @@ const {
 } = require("../controllers/list");
 
 // createList
-router.post("/createList", validate(schemas.createListValidation), createList);
+router.post("/createList", createList);
 
 // getAllList
 router.get("/getAllList", getAllList);
