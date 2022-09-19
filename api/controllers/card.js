@@ -1,7 +1,11 @@
 const Card = require("../models/Card");
 const httpStatus = require("http-status");
 const path = require("path");
-const { createNewCardForTrello } = require("../trelloServices/services");
+const {
+  createNewCardForTrello,
+  deleteCardForTrello,
+  updateCardForTrello,
+} = require("../trelloServices/services");
 
 // getAllCard
 const getAllCard = async (req, res) => {
@@ -11,17 +15,9 @@ const getAllCard = async (req, res) => {
 
 // createCard
 const createCard = async (req, res) => {
-  await createNewCardForTrello(req.body).then((response) => {
-    const fileName =
-      Math.floor(Math.random() * 101) * Math.floor(Math.random() * 20) +
-      `${req?.files.image.name}`;
-
-    const folderPath = path.join(__dirname, "../", "uploads/cards", fileName);
-
-    const data = { ...req.body, ...{ image: fileName } };
-
-    req.files.image.mv(folderPath, (err) => {
-      if (err) return res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err);
+  if (req.files === null) {
+    return await createNewCardForTrello(req.body).then((response) => {
+      const data = { ...req.body, ...{ idCardTrello: response.data.id } };
       const card = new Card(data);
       card
         .save()
@@ -32,7 +28,31 @@ const createCard = async (req, res) => {
           return res.status(httpStatus.BAD_REQUEST).json(e);
         });
     });
-  });
+  } else {
+    const fileName =
+      Math.floor(Math.random() * 101) * Math.floor(Math.random() * 20) +
+      `${req?.files.image.name}`;
+
+    const folderPath = path.join(__dirname, "../", "uploads/cards", fileName);
+
+    const data = { ...req.body, ...{ image: fileName } };
+
+    await createNewCardForTrello(data).then((response) => {
+      const newData = { ...data, ...{ idCardTrello: response.data.id } };
+      req.files.image.mv(folderPath, (err) => {
+        if (err) return res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err);
+        const card = new Card(newData);
+        card
+          .save()
+          .then((response) => {
+            res.status(httpStatus.OK).json(response);
+          })
+          .catch((e) => {
+            return res.status(httpStatus.BAD_REQUEST).json(e);
+          });
+      });
+    });
+  }
 };
 
 // getSingleCardByIdBoard
@@ -50,32 +70,51 @@ const getSingleCardByIdBoard = async (req, res) => {
 
 // updateCard
 const updateCard = async (req, res) => {
-  const fileName =
-    Math.floor(Math.random() * 101) * Math.floor(Math.random() * 20) +
-    `${req?.files.image.name}`;
+  if (req.files === null) {
+    return await updateCardForTrello(req.body).then((response) => {
+      console.log("response", response);
+      Card.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        .then((response) => {
+          res.status(httpStatus.OK).json(response);
+        })
+        .catch((e) => {
+          res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ error: e });
+        });
+    });
+  } else {
+    const fileName =
+      Math.floor(Math.random() * 101) * Math.floor(Math.random() * 20) +
+      `${req?.files.image.name}`;
 
-  const folderPath = path.join(__dirname, "../", "uploads/cards", fileName);
+    const folderPath = path.join(__dirname, "../", "uploads/cards", fileName);
 
-  const data = { ...req.body, ...{ image: fileName } };
+    const data = { ...req.body, ...{ image: fileName } };
 
-  req.files.image.mv(folderPath, (err) => {
-    if (err) return res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err);
+    req.files.image.mv(folderPath, (err) => {
+      if (err) return res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err);
 
-    Card.findByIdAndUpdate(req.params.id, data, { new: true })
-      .then((response) => {
-        res.status(httpStatus.OK).json(response);
-      })
-      .catch((e) => {
-        res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ error: e });
-      });
-  });
+      Card.findByIdAndUpdate(req.params.id, data, { new: true })
+        .then((response) => {
+          res.status(httpStatus.OK).json(response);
+        })
+        .catch((e) => {
+          res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ error: e });
+        });
+    });
+  }
 };
 
 // deleteCard
 const deleteCard = async (req, res) => {
-  return Card.findByIdAndDelete(req.params.id, { new: true })
+  await deleteCardForTrello(req.params.idCardTrello)
     .then((response) => {
-      res.status(httpStatus.OK).json(response);
+      return Card.findByIdAndDelete(req.params.id, { new: true })
+        .then((response) => {
+          res.status(httpStatus.OK).json(response);
+        })
+        .catch((e) => {
+          res.status(httpStatus.INTERNAL_SERVER_ERROR).json(e);
+        });
     })
     .catch((e) => {
       res.status(httpStatus.INTERNAL_SERVER_ERROR).json(e);

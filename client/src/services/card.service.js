@@ -28,8 +28,12 @@ export const updateCardById = (payload) => {
 };
 
 export const deleteCardById = (payload) => {
+  console.log("payload", payload);
+
   return axios
-    .delete(`/card/deleteCardById/${payload._id}`)
+    .delete(
+      `/card/deleteCardById/${payload._id}/idCardTrello/${payload.idCardTrello}`
+    )
     .then((res) => {
       return res.data;
     })

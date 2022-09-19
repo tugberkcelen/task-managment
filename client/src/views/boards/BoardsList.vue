@@ -51,6 +51,7 @@ export default {
 
     // createBoard service
     async createOrUpdateBoard() {
+      alert("test");
       if (this.createOrUpdateOrDelete == "create") {
         await createBoard(this.board);
         this.popupClosed();
@@ -127,7 +128,7 @@ export default {
         </TBtn>
         <TBtn
           v-if="createOrUpdateOrDelete == 'create'"
-          @click="createBoard"
+          @click="createOrUpdateBoard"
           styled="filled"
           color="primary"
         >
@@ -172,20 +173,23 @@ export default {
     <!-- .boards-list-wrapper start -->
     <div class="boards-list-wrapper">
       <!-- .board-box start -->
-      <div
-        @click="
-          $router.push({
-            name: 'board-details',
-            params: { id: board._id },
-          })
-        "
-        v-for="(board, key) in boards"
-        :key="key"
-        class="board-box"
-      >
+      <div v-for="(board, key) in boards" :key="key" class="board-box">
         <h5>{{ board.name }}</h5>
         <p>{{ board.desc }}</p>
         <div class="board-actions">
+          <TBtn
+            @click="
+              $router.push({
+                name: 'board-details',
+                params: { id: board._id },
+              })
+            "
+            width="40"
+            height="40"
+            color="success"
+          >
+            <i class="fad fa-eye"></i
+          ></TBtn>
           <TBtn
             @click="editBoard(board)"
             width="40"

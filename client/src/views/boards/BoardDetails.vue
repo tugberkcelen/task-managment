@@ -69,6 +69,8 @@ export default {
     await this.getSingleBoardById();
     await this.getSingleListByIdboard();
     await this.getSingleCardByIdBoard();
+
+    console.log("board", this.board);
   },
 
   methods: {
@@ -86,17 +88,18 @@ export default {
     },
 
     // createCardPopup
-    createCardPopup(id) {
-      console.log("this.card", this.card);
+    createCardPopup(list) {
       this.createOrUpdateOrDelete = "create";
       this.addOrUpdateCardDialogPopup = true;
-      this.list._id = id;
+      this.list._id = list._id;
+      this.list.idListTrello = list.idListTrello;
       this.card.name = "";
       this.card.desc = "";
       this.card.idBoard = "";
       this.card.importance = "low";
       this.card.status = "";
       this.card.idList = "";
+      this.card.idListTrello = "";
       this.card.image = {};
       this.card.image["preview"] = "";
       this.card.image["file"] = "";
@@ -123,6 +126,16 @@ export default {
       this.card.image["file"] = "";
     },
 
+    changeTrelloId() {
+      this.lists.forEach((list) => {
+        if (this.card.idList == list._id) {
+          console.log("aa", list.idListTrello);
+          this.card.idListTrello = list.idListTrello;
+          this.list.idListTrello = list.idListTrello;
+        }
+      });
+    },
+
     // createCard
     async createCard() {
       if (this.createOrUpdateOrDelete == "create") {
@@ -133,19 +146,28 @@ export default {
         data.append("importance", this.card.importance);
         data.append("status", true);
         data.append("idList", this.list._id);
-        data.append("image", this.card.image.file);
+        data.append("idListTrello", this.list.idListTrello);
+
+        this.card.image.file.name
+          ? data.append("image", this.card.image.file)
+          : "";
         await createCard(data);
         this.popupClosed();
       } else if (this.createOrUpdateOrDelete == "update") {
-        console.log("aaa", this.list);
+        await this.editCard();
+        this.list.idListTrello = this.card.idListTrello;
         const data = new FormData();
         data.append("name", this.card.name);
         data.append("desc", this.card.desc);
         data.append("idBoard", this.$route.params.id);
         data.append("importance", this.card.importance);
         data.append("status", true);
-        data.append("idList", this.list._id);
-        data.append("image", this.card.image.file);
+        data.append("idList", this.card.idList);
+        data.append("idListTrello", this.list.idListTrello);
+        data.append("idCardTrello", this.card.idCardTrello);
+        this.card.image?.file.name
+          ? data.append("image", this.card.image.file)
+          : "";
         await updateCardById({ data: data, id: this.card._id });
         this.popupClosed();
       } else {
@@ -173,10 +195,14 @@ export default {
 
     //editCard
     editCard(payload) {
-      this.card = payload.card;
-      this.list._id = payload.list._id;
-      this.createOrUpdateOrDelete = "update";
-      this.addOrUpdateCardDialogPopup = true;
+      if (payload) {
+        this.card = payload.card;
+        this.list._id = payload.list._id;
+        this.list.idListTrello = payload.list.idListTrello;
+        this.createOrUpdateOrDelete = "update";
+        this.addOrUpdateCardDialogPopup = true;
+      }
+      console.log("newPayload", this.list);
     },
 
     // deleteCardDialogFunc
@@ -219,7 +245,8 @@ export default {
     <!-- .add-card-dialog start -->
     <Dialog v-if="addOrUpdateCardDialogPopup" class="add-card-dialog">
       <template #title>
-        <h4>Kart Ekle</h4>
+        <h4 v-if="createOrUpdateOrDelete == 'create'">Kart Ekle</h4>
+        <h4 v-else>Kart Düzenle</h4>
       </template>
       <template #content>
         <!-- .form-group start -->
@@ -253,19 +280,17 @@ export default {
         </div>
         <!-- .form-group finish -->
         <!-- .form-group start -->
-        <!--<div v-if="createOrUpdateOrDelete == 'update'" class="form-group">
+        <div v-if="createOrUpdateOrDelete == 'update'" class="form-group">
           <TSelect
             v-model="card.idList"
             :items="lists"
             item-key="_id"
             item-value="name"
             color="primary"
+            @input="changeTrelloId"
+            label="Liste Durumunu Seçin"
           />
-          <pre>
-          {{ lists }}
-        </pre
-          >
-        </div>-->
+        </div>
         <!-- .form-group finish -->
         <!-- .form-group start -->
         <div class="form-group">
@@ -284,7 +309,7 @@ export default {
         <!-- .form-group start -->
         <div class="form-group">
           <!-- .image-preview start -->
-          <div v-if="card.image.preview" class="image-preview">
+          <div v-if="card.image?.preview" class="image-preview">
             <!-- .remove-image start -->
             <TBtn
               @click="removeImage"
@@ -296,11 +321,11 @@ export default {
               <i class="fad fa-trash-alt"></i>
             </TBtn>
             <!-- .remove-image finish -->
-            <img v-if="card.image.preview" :src="card.image.preview" alt="" />
+            <img :src="card.image.preview" alt="" />
           </div>
           <!-- .image-preview finish -->
           <!-- .image-preview start -->
-          <div v-else-if="card.image.preview != ''" class="image-preview">
+          <div v-if="card.image?.preview" class="image-preview preview-1">
             <!-- .remove-image start -->
             <TBtn
               @click="removeEditedImage"
@@ -349,7 +374,9 @@ export default {
         :style="{ width: `calc(100% / ${lists.length})` }"
       >
         <h6 class="list-title">
-          {{ list.name }}
+          {{ list.name }}<br />
+          id=> {{ list._id }} <br />
+          idListTrello => {{ list.idListTrello }}
         </h6>
         <!-- .card-wrapper start -->
         <div class="card-wrapper">
@@ -362,6 +389,7 @@ export default {
                 <!-- .card-image start -->
                 <div class="card-image">
                   <img
+                    v-if="card.image"
                     :src="`http://localhost:3000/uploads/cards/` + card.image"
                     :alt="card.name"
                   />
@@ -407,10 +435,7 @@ export default {
               <!-- .card-footer finish -->
             </div>
           </template>
-          <div
-            @click="createCardPopup(list._id)"
-            class="card-box card-new-item"
-          >
+          <div @click="createCardPopup(list)" class="card-box card-new-item">
             Kart Ekle
           </div>
           <!-- .card start -->

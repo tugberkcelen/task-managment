@@ -11,7 +11,7 @@ const {
 } = require("../controllers/card");
 
 // createCard
-router.post("/createCard", createCard);
+router.post("/createCard", validate(schemas.createCardValidation), createCard);
 
 // getAllCard
 router.get("/getAllCard", getAllCard);
@@ -20,7 +20,7 @@ router.get("/getAllCard", getAllCard);
 router.patch("/updateCardById/:id", updateCard);
 
 // deleteCard
-router.delete("/deleteCardById/:id", deleteCard);
+router.delete("/deleteCardById/:id/idCardTrello/:idCardTrello", deleteCard);
 
 // getSingleCardByIdBoard
 router.get("/getSingleCardByIdBoard/:id", getSingleCardByIdBoard);

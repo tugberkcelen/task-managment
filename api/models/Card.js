@@ -12,6 +12,8 @@ const cardSchema = new Mongoose.Schema(
     },
     status: { type: Boolean },
     idList: { type: Mongoose.Types.ObjectId },
+    idListTrello: { type: Mongoose.Types.ObjectId },
+    idCardTrello: { type: Mongoose.Types.ObjectId },
     image: { type: String },
   },
   { versionKey: false, timestamps: true }

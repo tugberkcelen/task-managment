@@ -2,6 +2,12 @@
 export default {
   name: "TSelect",
 
+  data() {
+    return {
+      testData: "item.name",
+    };
+  },
+
   props: {
     color: {
       required: false,
@@ -21,6 +27,12 @@ export default {
     items: {
       default: [],
       required: false,
+    },
+    itemKey: {
+      default: "key",
+    },
+    itemValue: {
+      default: "value",
     },
   },
 
@@ -58,6 +70,12 @@ export default {
       },
     },
   },
+
+  computed: {
+    selectKeyValueCross(select) {
+      return console.log("select", select);
+    },
+  },
 };
 </script>
 <template>
@@ -73,8 +91,12 @@ export default {
           :required="required"
           @input="(e) => $emit('update:modelValue', e.target.value)"
         >
-          <option v-for="(item, index) in items" :key="index" :value="item.key">
-            {{ item.value }}
+          <option
+            v-for="(item, index) in items"
+            :key="index"
+            :value="item[itemKey]"
+          >
+            {{ item[itemValue] }}
           </option>
         </select>
         <label class="input-label">{{ label }}</label>
