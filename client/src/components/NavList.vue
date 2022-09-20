@@ -23,7 +23,7 @@ export default {
         :to="list.slug"
       >
         <i :class="`fad ${list.icon}`"></i>
-        <span class="name"> {{ list.name }} </span>
+        <span class="name"> {{ $t(list.name) }} </span>
       </router-link>
       <!-- .item finish -->
     </nav>

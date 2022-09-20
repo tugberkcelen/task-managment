@@ -34,8 +34,6 @@ const deleteListForTrello = (payload) => {
   return axios.put(encodedURI);
 };
 
-// --url 'https://api.trello.com/1/lists/{id}/closed?key=APIKey&token=APIToken'
-
 // Card services
 
 const createNewCardForTrello = (payload) => {

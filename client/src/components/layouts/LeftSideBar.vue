@@ -13,12 +13,12 @@ export default {
     return {
       navListData: [
         {
-          name: "Kontrol Paneli",
+          name: "sideBar.navLists1.title",
           icon: "fa-sliders-v-square",
           slug: "/",
         },
         {
-          name: "Panoları Listele",
+          name: "sideBar.navLists2.title",
           icon: "fa-clipboard",
           slug: "/boards/list",
         },

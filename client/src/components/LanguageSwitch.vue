@@ -9,14 +9,14 @@ export default {
 
   data() {
     return {
-      language: "TR",
+      language: "tr",
       languages: [
         {
-          key: "TR",
+          key: "tr",
           value: "TR",
         },
         {
-          key: "EN",
+          key: "en",
           value: "EN",
         },
       ],

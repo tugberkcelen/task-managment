@@ -1,23 +1,74 @@
 {
     "home":{
-        "PageHeader":"EN Merhaba, Shipentegra Task'a Hoş geldiniz",
+        "PageHeader":"Hello, Welcome to Shipentegra Task",
         "boxsContent0":{
-            "title":"EN Hızlı Board Ekle",
-            "content":"EN Bu alandan boardları ekleyebilirsiniz",
-            "slug":"EN/",
-            "buttonText":"EN Ekle"
-        },
-        "boxsContent1":{
-            "title":"EN Boardları Listele",
-            "content":"EN Bu alandan boardları listeyebilirsiniz",
-            "slug":"EN/",
-            "buttonText":"EN Listele"
-        },
-        "boxsContent2":{
-            "title":"EN Hızlı Todo Ekle",
-            "content":"EN Bu alandan todo ekleyebilirsiniz",
-            "slug":"EN/",
-            "buttonText":"EN Listele"
+            "title":"List Boards",
+            "content":"You can request boards from this area",
+            "slug":"/boards/list",
+            "buttonText":"List"
         }
+    },
+    "boardslist":{
+        "PageHeader":"Boards",
+        "pageHeaderButton":"Add Clipboard",
+        "nodatacontent":"There is no clipboard right now, you can add a clipboard below",
+        "createBoardPopup":{
+         "popuptitle":"Add Clipboard",
+         "boardName":"Board Name",
+         "boardDesc":"Board Description",
+         "popupCloseButtonText":"Close",
+         "popupCreateButtonText":"Add",
+         "popupUpdateButtonText":"Update"
+        },
+        "deleteBoardDialog":{
+            "deleteBoardContent":"Are you sure you want to delete the board?",
+            "cancelButton":"Cancel",
+            "deleteButton":"Delete"
+        }
+    },
+
+    "boarddetails":{
+        "addListButton":"Add List",
+
+        "deleteCardDialog":{
+            "deleteCardContent":"Are you sure you want to delete the clipboard?",
+            "cancelButton":"Cancel",
+            "deleteButton":"Delete"
+        },
+        "deleteListDialog":{
+            "deleteListContent":"Are you sure you want to delete the clipboard?",
+            "cancelButton":"Cancel",
+            "deleteButton":"Delete"
+        },
+        "createCardPopup":{
+            "popuptitle":"Add Card",
+            "popuptitleUpdate":"Edit Card",
+            "cardName":"Card Name",
+            "cardDesc":"Card Description",
+            "importanceStatus":"Select Importance Status",
+            "listStatus":"Select List Status",
+            "popupCloseButtonText":"Close",
+            "popupCreateButtonText":"Add",
+            "popupUpdateButtonText":"Update"
+        },
+        "createListPopup":{
+            "popuptitle":"Add List Element",
+            "popuptitleUpdate":"Edit List Element",
+            "listName":"List Name",
+            "listDesc":"List Description",
+            "popupCloseButtonText":"Close",
+            "popupCreateButtonText":"Add",
+            "popupUpdateButtonText":"Update"
+        }
+    },
+
+"sideBar":{
+    "navLists1":{
+        "title":"Control Panel"
+    },
+    "navLists2":{
+        "title":"List Boards"
     }
+}
+
 }

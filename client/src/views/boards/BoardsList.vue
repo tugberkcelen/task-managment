@@ -106,17 +106,21 @@ export default {
   <div v-if="boards.length > 0" class="boards-list-view">
     <Dialog v-if="boardDialog" max-width="600">
       <template #title>
-        <h4>Pano Ekle</h4>
+        <h4>{{ $t("boardslist.createBoardPopup.popuptitle") }}</h4>
       </template>
       <template #content>
         <form @submit.prevent="" class="form">
           <div class="form-group">
-            <TextField v-model="board.name" label="Pano Adı" color="primary" />
+            <TextField
+              v-model="board.name"
+              :label="$t(`boardslist.createBoardPopup.boardName`)"
+              color="primary"
+            />
           </div>
           <div class="form-group">
             <TextField
               v-model="board.desc"
-              label="Pano Açıklaması"
+              :label="$t(`boardslist.createBoardPopup.boardDesc`)"
               color="primary"
             />
           </div>
@@ -124,7 +128,7 @@ export default {
       </template>
       <template #footer>
         <TBtn @click="popupClosed" styled="outlined" color="primary">
-          Kapat
+          {{ $t(`boardslist.createBoardPopup.popupCloseButtonText`) }}
         </TBtn>
         <TBtn
           v-if="createOrUpdateOrDelete == 'create'"
@@ -132,7 +136,7 @@ export default {
           styled="filled"
           color="primary"
         >
-          Ekle
+          {{ $t(`boardslist.createBoardPopup.popupCreateButtonText`) }}
         </TBtn>
         <TBtn
           v-else
@@ -140,7 +144,7 @@ export default {
           styled="filled"
           color="primary"
         >
-          Güncelle
+          {{ $t(`boardslist.createBoardPopup.popupUpdateButtonText`) }}
         </TBtn>
       </template>
     </Dialog>
@@ -148,16 +152,16 @@ export default {
     <Dialog v-if="deleteBoardDialog" max-width="600">
       <template #title>
         <h4 class="text-center">
-          Panoyu Silmek İstediğinize <br />Emin misiniz ?
+          {{ $t(`boardslist.deleteBoardDialog.deleteBoardContent`) }}
         </h4>
       </template>
       <template #content>
         <div class="dual-button justify-content-center">
           <TBtn @click="cancelDeleteBoard" styled="outlined" color="primary">
-            İptal Et
+            {{ $t(`boardslist.deleteBoardDialog.cancelButton`) }}
           </TBtn>
           <TBtn @click="createOrUpdateBoard" styled="filled" color="primary">
-            Sil
+            {{ $t(`boardslist.deleteBoardDialog.deleteButton`) }}
           </TBtn>
         </div>
       </template>

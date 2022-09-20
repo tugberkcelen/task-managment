@@ -70,12 +70,6 @@ export default {
       },
     },
   },
-
-  computed: {
-    selectKeyValueCross(select) {
-      return console.log("select", select);
-    },
-  },
 };
 </script>
 <template>

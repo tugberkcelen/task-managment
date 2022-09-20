@@ -18,18 +18,6 @@ export default {
           slug: "home.boxsContent0.slug",
           buttonText: "home.boxsContent0.buttonText",
         },
-        {
-          title: "home.boxsContent1.title",
-          content: "home.boxsContent1.content",
-          slug: "home.boxsContent1.slug",
-          buttonText: "home.boxsContent1.buttonText",
-        },
-        {
-          title: "home.boxsContent2.title",
-          content: "home.boxsContent2.content",
-          slug: "home.boxsContent2.slug",
-          buttonText: "home.boxsContent2.buttonText",
-        },
       ],
     };
   },

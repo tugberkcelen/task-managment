@@ -30,7 +30,6 @@ const createList = async (req, res) => {
   await createListOnBoardForTrello(req.body)
     .then((response) => {
       const data = { ...req.body, ...{ idListTrello: response.data.id } };
-      console.log("data", data);
       const list = new List(data);
       list
         .save()
@@ -42,7 +41,6 @@ const createList = async (req, res) => {
         });
     })
     .catch((e) => {
-      console.log("e", e);
       return res.status(httpStatus.BAD_REQUEST).json(e);
     });
 };
@@ -65,7 +63,6 @@ const updateList = async (req, res) => {
         );
     })
     .catch((e) => {
-      console.log("e", e);
       res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ error: e });
     });
 };

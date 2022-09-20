@@ -2,27 +2,73 @@
     "home":{
         "PageHeader":"Merhaba, Shipentegra Task'a Hoş geldiniz",
         "boxsContent0":{
-            "title":"Hızlı Board Ekle",
-            "content":"Bu alandan boardları ekleyebilirsiniz",
+            "title":"Panoları Listele",
+            "content":"Bu alandan panoları listeyebilirsiniz",
             "slug":"/boards/list",
-            "buttonText":"Ekle"
-        },
-        "boxsContent1":{
-            "title":"Boardları Listele",
-            "content":"Bu alandan boardları listeyebilirsiniz",
-            "slug":"/boards/list",
-            "buttonText":"Listele"
-        },
-        "boxsContent2":{
-            "title":"Hızlı Todo Ekle",
-            "content":"Bu alandan todo ekleyebilirsiniz",
-            "slug":"/",
             "buttonText":"Listele"
         }
     },
     "boardslist":{
         "PageHeader":"Panolar",
         "pageHeaderButton":"Pano Ekle",
-        "nodatacontent":"Şuan pano yok hemen aşşağıdan pano ekleyebilirsiniz"
+        "nodatacontent":"Şuan pano yok hemen aşşağıdan pano ekleyebilirsiniz",
+        "createBoardPopup":{
+         "popuptitle":"Pano Ekle",
+         "boardName":"Pano Adı",
+         "boardDesc":"Pano Açıklaması",
+         "popupCloseButtonText":"Kapat",
+         "popupCreateButtonText":"Ekle",
+         "popupUpdateButtonText":"Güncelle"
+        },
+        "deleteBoardDialog":{
+            "deleteBoardContent":"Panoyu Silmek İstediğinize Emin misiniz ?",
+            "cancelButton":"İptal Et",
+            "deleteButton":"Sil"
+        }
+    },
+    
+        "boarddetails":{
+            "addListButton":"Liste Ekle",
+
+            "deleteCardDialog":{
+                "deleteCardContent":"Panoyu Silmek İstediğinize Emin misiniz ?",
+                "cancelButton":"İptal Et",
+                "deleteButton":"Sil"
+            },
+            "deleteListDialog":{
+                "deleteListContent":"Panoyu Silmek İstediğinize Emin misiniz ?",
+                "cancelButton":"İptal Et",
+                "deleteButton":"Sil"
+            },
+            "createCardPopup":{
+                "popuptitle":"Kart Ekle",
+                "popuptitleUpdate":"Kart Düzenle",
+                "cardName":"Kart Adı",
+                "cardDesc":"Kart Açıklaması",
+                "importanceStatus":"Önem Durumu Seçiniz",
+                "listStatus":"Liste Durumunu Seçin",
+                "popupCloseButtonText":"Kapat",
+                "popupCreateButtonText":"Ekle",
+                "popupUpdateButtonText":"Güncelle"
+            },
+            "createListPopup":{
+                "popuptitle":"Liste Elemanı Ekle",
+                "popuptitleUpdate":"Liste Elemanı Düzenle",
+                "listName":"Liste Adı",
+                "listDesc":"Liste Açıklaması",
+                "popupCloseButtonText":"Kapat",
+                "popupCreateButtonText":"Ekle",
+                "popupUpdateButtonText":"Güncelle"
+            }
+        },
+    
+    "sideBar":{
+        "navLists1":{
+            "title":"Kontrol Paneli"
+        },
+        "navLists2":{
+            "title":"Panoları Listele"
+        }
     }
+   
 }

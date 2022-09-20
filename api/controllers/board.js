@@ -58,16 +58,11 @@ const updateBoard = async (req, res) => {
           res.status(httpStatus.OK).json(response);
         })
         .catch((e) => {
-          res
-            .status(httpStatus.INTERNAL_SERVER_ERROR)
-            .json({ error: "something went wrong" });
+          res.status(httpStatus.INTERNAL_SERVER_ERROR).json(e);
         });
     })
     .catch((e) => {
-      console.log("ee", e);
-      res
-        .status(httpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error: "something went wrong" });
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).json(e);
     });
 };
 

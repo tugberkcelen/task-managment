@@ -84,8 +84,6 @@ export default {
     await this.getSingleBoardById();
     await this.getSingleListByIdboard();
     await this.getSingleCardByIdBoard();
-
-    console.log("board", this.board);
   },
 
   methods: {
@@ -144,7 +142,6 @@ export default {
     changeTrelloId() {
       this.lists.forEach((list) => {
         if (this.card.idList == list._id) {
-          console.log("aa", list.idListTrello);
           this.card.idListTrello = list.idListTrello;
           this.list.idListTrello = list.idListTrello;
         }
@@ -209,7 +206,6 @@ export default {
 
     //editCard
     editCard(payload) {
-      console.log("payloadddburasi", payload);
       this.card = payload.card;
       this.list._id = payload.list._id;
       this.list.idListTrello = payload.list.idListTrello;
@@ -270,7 +266,6 @@ export default {
       this.createListData = list;
       this.cards.forEach((card) => {
         if (card.idList == this.createListData._id) {
-          console.log("forEachCard", this.card);
           this.card = card;
         }
       });
@@ -296,7 +291,9 @@ export default {
   <div class="board-details-view">
     <PageHeader :title="this.board.name">
       <template #pageHeaderButton>
-        <TBtn @click="listCardPopup" color="primary"> Liste ekle </TBtn>
+        <TBtn @click="listCardPopup" color="primary">
+          {{ $t("boarddetails.addListButton") }}
+        </TBtn>
       </template>
     </PageHeader>
     <Dialog
@@ -306,20 +303,20 @@ export default {
     >
       <template #title>
         <h4 class="text-center">
-          Kartı Silmek İstediğinize <br />Emin misiniz ?
+          {{ $t("boarddetails.deleteCardDialog.deleteCardContent") }}
         </h4>
       </template>
       <template #content>
         <div class="dual-button justify-content-center">
           <TBtn @click="cancelDeleteCard" styled="outlined" color="primary">
-            İptal Et
+            {{ $t("boarddetails.deleteCardDialog.cancelButton") }}
           </TBtn>
           <TBtn
             @click="createOrUpdateOrDeleteCardFunc"
             styled="filled"
             color="primary"
           >
-            Sil
+            {{ $t("boarddetails.deleteCardDialog.deleteButton") }}
           </TBtn>
         </div>
       </template>
@@ -331,20 +328,24 @@ export default {
     >
       <template #title>
         <h4 class="text-center">
-          Listeyi Silmek İstediğinize <br />Emin misiniz ?
+          {{ $t("boarddetails.deleteListDialog.deleteListContent") }}
         </h4>
       </template>
       <template #content>
         <div class="dual-button justify-content-center">
-          <TBtn @click="cancelDeleteList" styled="outlined" color="primary">
-            İptal Et
+          <TBtn
+            @click="deleteListDialog = false"
+            styled="outlined"
+            color="primary"
+          >
+            {{ $t("boarddetails.deleteListDialog.cancelButton") }}
           </TBtn>
           <TBtn
             @click="createOrUpdateOrDeleteListFunc"
             styled="filled"
             color="primary"
           >
-            Sil
+            {{ $t("boarddetails.deleteListDialog.deleteButton") }}
           </TBtn>
         </div>
       </template>
@@ -355,8 +356,12 @@ export default {
       class="add-card-dialog"
     >
       <template #title>
-        <h4 v-if="createOrUpdateOrDeleteCard == 'create'">Kart Ekle</h4>
-        <h4 v-else>Kart Düzenle</h4>
+        <h4 v-if="createOrUpdateOrDeleteCard == 'create'">
+          {{ $t("boarddetails.createCardPopup.popuptitle") }}
+        </h4>
+        <h4 v-else>
+          {{ $t("boarddetails.createCardPopup.popuptitleUpdate") }}
+        </h4>
       </template>
       <template #content>
         <!-- .form-group start -->
@@ -364,7 +369,7 @@ export default {
           <TextField
             type="text"
             v-model="card.name"
-            label="Kart Adı"
+            :label="$t(`boarddetails.createCardPopup.cardName`)"
             color="primary"
           />
         </div>
@@ -374,7 +379,7 @@ export default {
           <TextField
             type="text"
             v-model="card.desc"
-            label="Kart Açıklaması"
+            :label="$t(`boarddetails.createCardPopup.cardDesc`)"
             color="primary"
           />
         </div>
@@ -385,7 +390,7 @@ export default {
             v-model="card.importance"
             :items="importances"
             color="primary"
-            label="Önem Durumu Seçiniz"
+            :label="$t(`boarddetails.createCardPopup.importanceStatus`)"
           />
         </div>
         <!-- .form-group finish -->
@@ -398,7 +403,7 @@ export default {
             item-value="name"
             color="primary"
             @input="changeTrelloId"
-            label="Liste Durumunu Seçin"
+            :label="$t(`boarddetails.createCardPopup.listStatus`)"
           />
         </div>
         <!-- .form-group finish -->
@@ -437,6 +442,7 @@ export default {
           <!-- .image-preview start -->
           <div
             v-if="
+              card.image &&
               card.image?.preview != '' &&
               createOrUpdateOrDeleteCard == 'update'
             "
@@ -464,7 +470,7 @@ export default {
       </template>
       <template #footer>
         <TBtn @click="cardPopupClosed" styled="outlined" color="primary">
-          Kapat
+          {{ $t(`boarddetails.createCardPopup.popupCloseButtonText`) }}
         </TBtn>
         <TBtn
           v-if="createOrUpdateOrDeleteCard == 'create'"
@@ -472,7 +478,7 @@ export default {
           styled="filled"
           color="primary"
         >
-          Ekle
+          {{ $t(`boarddetails.createCardPopup.popupCreateButtonText`) }}
         </TBtn>
         <TBtn
           v-else
@@ -480,7 +486,7 @@ export default {
           styled="filled"
           color="primary"
         >
-          Güncelle
+          {{ $t(`boarddetails.createCardPopup.popupUpdateButtonText`) }}
         </TBtn>
       </template>
     </Dialog>
@@ -492,9 +498,11 @@ export default {
     >
       <template #title>
         <h4 v-if="createOrUpdateOrDeleteCard == 'create'">
-          Liste Elemanı Ekle
+          {{ $t(`boarddetails.createListPopup.popuptitle`) }}
         </h4>
-        <h4 v-else>Liste Elemanı Düzenle</h4>
+        <h4 v-else>
+          {{ $t(`boarddetails.createListPopup.popuptitleUpdate`) }}
+        </h4>
       </template>
       <template #content>
         <!-- .form-group start -->
@@ -502,7 +510,7 @@ export default {
           <TextField
             type="text"
             v-model="createListData.name"
-            label="Liste Adı"
+            :label="$t(`boarddetails.createListPopup.listName`)"
             color="primary"
           />
         </div>
@@ -512,7 +520,7 @@ export default {
           <TextField
             type="text"
             v-model="createListData.desc"
-            label="Liste Açıklaması"
+            :label="$t(`boarddetails.createListPopup.listDesc`)"
             color="primary"
           />
         </div>
@@ -520,7 +528,7 @@ export default {
       </template>
       <template #footer>
         <TBtn @click="listPopupClosed" styled="outlined" color="primary">
-          Kapat
+          {{ $t(`boarddetails.createListPopup.popupCloseButtonText`) }}
         </TBtn>
         <TBtn
           v-if="createOrUpdateOrDeleteList == 'create'"
@@ -528,7 +536,7 @@ export default {
           styled="filled"
           color="primary"
         >
-          Ekle
+          {{ $t(`boarddetails.createListPopup.popupCreateButtonText`) }}
         </TBtn>
         <TBtn
           v-else
@@ -536,7 +544,7 @@ export default {
           styled="filled"
           color="primary"
         >
-          Güncelle
+          {{ $t(`boarddetails.createListPopup.popupUpdateButtonText`) }}
         </TBtn>
       </template>
     </Dialog>
@@ -639,7 +647,7 @@ export default {
             </div>
           </template>
           <div @click="createCardPopup(list)" class="card-box card-new-item">
-            Kart Ekle
+            {{ $t("boarddetails.createCardPopup.popuptitle") }}
           </div>
           <!-- .card start -->
         </div>

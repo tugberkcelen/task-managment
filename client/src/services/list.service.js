@@ -19,7 +19,6 @@ export const createList = (payload) => {
 };
 
 export const updateListById = (payload) => {
-  console.log("update", payload);
   return axios
     .patch(`/list/updateListById/${payload._id}`, payload)
     .then((res) => {
@@ -29,7 +28,6 @@ export const updateListById = (payload) => {
 };
 
 export const deleteListById = (payload) => {
-  console.log("deletelist", payload);
   return axios.delete(
     `/list/deleteListById/${payload.list._id}/idListTrello/${payload.idListTrello}`,
     payload.idListTrello
