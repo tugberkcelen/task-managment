@@ -1,5 +1,41 @@
+<script>
+import Logo from "@/components/Logo.vue";
+import NavList from "@/components/NavList.vue";
+export default {
+  name: "LeftSideBar",
+
+  components: {
+    Logo,
+    NavList,
+  },
+
+  data() {
+    return {
+      navListData: [
+        {
+          name: "Kontrol Paneli",
+          icon: "fa-sliders-v-square",
+          slug: "/",
+        },
+        {
+          name: "Panoları Listele",
+          icon: "fa-clipboard",
+          slug: "/boards/list",
+        },
+      ],
+    };
+  },
+};
+</script>
 <template>
-  <div class="sidebar-wrapper"></div>
+  <div class="sidebar-wrapper">
+    <!-- #logo start -->
+    <Logo />
+    <!-- #logo finish -->
+    <!-- #nav-list start -->
+    <NavList :navListData="navListData" />
+    <!-- #nav-list finish -->
+  </div>
 </template>
 
 <style lang="scss">
@@ -7,5 +43,7 @@
   border-right: 2px solid var(--borderColor);
   width: 18%;
   background: #fff;
+  display: flex;
+  flex-direction: column;
 }
 </style>
