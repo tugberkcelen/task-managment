@@ -26,6 +26,7 @@ body {
 #router-view-wrapper {
     padding: 1rem 1.8rem;
     height: 100%;
+    min-height: 100vh;
 }
 
 .no-data {
