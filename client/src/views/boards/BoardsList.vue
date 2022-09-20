@@ -51,7 +51,6 @@ export default {
 
     // createBoard service
     async createOrUpdateBoard() {
-      alert("test");
       if (this.createOrUpdateOrDelete == "create") {
         await createBoard(this.board);
         this.popupClosed();
