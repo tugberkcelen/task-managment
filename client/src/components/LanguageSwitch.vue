@@ -36,7 +36,7 @@ export default {
       v-model="language"
       :items="languages"
       color="primary"
-      label="🌐 Dil Seçiniz"
+      :label="$t(`chooselanguage`)"
       @click="setLocale(language)"
     />
   </div>
