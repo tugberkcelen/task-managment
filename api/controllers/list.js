@@ -3,6 +3,7 @@ const httpStatus = require("http-status");
 const {
   createListOnBoardForTrello,
   updateListForTrello,
+  deleteListForTrello,
 } = require("../trelloServices/services");
 
 // getAllList
@@ -29,6 +30,7 @@ const createList = async (req, res) => {
   await createListOnBoardForTrello(req.body)
     .then((response) => {
       const data = { ...req.body, ...{ idListTrello: response.data.id } };
+      console.log("data", data);
       const list = new List(data);
       list
         .save()
@@ -76,6 +78,7 @@ const deleteList = async (req, res) => {
     });
   }
 
+  await deleteListForTrello(req.params.idListTrello);
   return List.findByIdAndDelete(req.params.id, { new: true })
     .then((response) => {
       res.status(httpStatus.OK).json(response);

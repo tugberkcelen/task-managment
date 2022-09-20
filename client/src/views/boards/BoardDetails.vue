@@ -4,6 +4,7 @@ import {
   getSingleListByIdboard,
   createList,
   updateListById,
+  deleteListById,
 } from "@/services/list.service.js";
 import {
   getSingleCardByIdBoard,
@@ -168,7 +169,6 @@ export default {
         await createCard(data);
         this.cardPopupClosed();
       } else if (this.createOrUpdateOrDeleteCard == "update") {
-        await this.editCard();
         this.list.idListTrello = this.card.idListTrello;
         const data = new FormData();
         data.append("name", this.card.name);
@@ -209,6 +209,7 @@ export default {
 
     //editCard
     editCard(payload) {
+      console.log("payloadddburasi", payload);
       this.card = payload.card;
       this.list._id = payload.list._id;
       this.list.idListTrello = payload.list.idListTrello;
@@ -226,14 +227,12 @@ export default {
     // cancelDeleteCard
     async cancelDeleteCard() {
       this.deleteCardDialog = false;
-      await getSingleCardByIdBoard();
     },
 
     // listCardPopup
     listCardPopup() {
       this.createOrUpdateOrDeleteList = "create";
       this.createOrUpdateOrDeleteListDialogPopup = true;
-      this.createListData._id = "";
       this.createListData.name = "";
       this.createListData.desc = "";
       this.createListData.idBoard = "";
@@ -257,7 +256,31 @@ export default {
       } else if (this.createOrUpdateOrDeleteList == "update") {
         await updateListById(this.createListData);
         this.listPopupClosed();
+      } else {
+        await deleteListById({
+          list: this.createListData,
+          idListTrello: this.createListData.idListTrello,
+        });
+        this.listPopupClosed();
       }
+    },
+
+    // deleteCardDialogFunc
+    deleteListDialogFunc(list) {
+      this.createListData = list;
+      this.cards.forEach((card) => {
+        if (card.idList == this.createListData._id) {
+          console.log("forEachCard", this.card);
+          this.card = card;
+        }
+      });
+      this.createOrUpdateOrDeleteList = "delete";
+      this.deleteListDialog = true;
+    },
+
+    // cancelDeleteCard
+    async cancelDeleteCard() {
+      this.deleteListDialog = false;
     },
 
     // editList
@@ -293,6 +316,31 @@ export default {
           </TBtn>
           <TBtn
             @click="createOrUpdateOrDeleteCardFunc"
+            styled="filled"
+            color="primary"
+          >
+            Sil
+          </TBtn>
+        </div>
+      </template>
+    </Dialog>
+    <Dialog
+      class="card-accepted-for-delete"
+      v-if="deleteListDialog"
+      max-width="600"
+    >
+      <template #title>
+        <h4 class="text-center">
+          Listeyi Silmek İstediğinize <br />Emin misiniz ?
+        </h4>
+      </template>
+      <template #content>
+        <div class="dual-button justify-content-center">
+          <TBtn @click="cancelDeleteList" styled="outlined" color="primary">
+            İptal Et
+          </TBtn>
+          <TBtn
+            @click="createOrUpdateOrDeleteListFunc"
             styled="filled"
             color="primary"
           >
@@ -383,13 +431,14 @@ export default {
               <i class="fad fa-trash-alt"></i>
             </TBtn>
             <!-- .remove-image finish -->
-            <img :src="card.image.preview" alt="" />
+            <img :src="card.image?.preview" alt="" />
           </div>
           <!-- .image-preview finish -->
           <!-- .image-preview start -->
           <div
             v-if="
-              card.image.preview != '' && createOrUpdateOrDeleteCard == 'update'
+              card.image?.preview != '' &&
+              createOrUpdateOrDeleteCard == 'update'
             "
             class="image-preview preview-1"
           >
@@ -516,7 +565,7 @@ export default {
             <i class="fad fa-edit"></i>
           </TBtn>
           <TBtn
-            @click="deleteCardDialogFunc(card)"
+            @click="deleteListDialogFunc(list)"
             class="circle"
             width="35"
             height="35"
@@ -534,7 +583,16 @@ export default {
             <div v-if="list._id == card.idList" :key="index" class="card-box">
               <!-- .card-content start -->
               <div class="card-content">
-                <h6>{{ card.name }}</h6>
+                <!-- .title-wrapper start -->
+                <div class="title-wrapper">
+                  <!-- .card-importance start -->
+                  <h6>{{ card.name }}</h6>
+                  <div class="card-importance">
+                    <Badge :text="card.importance" />
+                  </div>
+                  <!-- .card-importance finish -->
+                </div>
+                <!-- .title-wrapper finish -->
                 <!-- .card-image start -->
                 <div class="card-image">
                   <img
@@ -547,11 +605,7 @@ export default {
                 <p>{{ card.desc }}</p>
               </div>
               <!-- .card-content finish -->
-              <!-- .card-importance start -->
-              <div class="card-importance">
-                <Badge :text="card.importance" />
-              </div>
-              <!-- .card-importance finish -->
+
               <!-- .card-footer start -->
               <div class="card-footer">
                 <!-- .card-actions start -->
@@ -634,6 +688,16 @@ export default {
     border-radius: 6px;
     position: relative;
 
+    .title-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      h6 {
+        margin-bottom: 0;
+      }
+    }
+
     .card-image {
       margin: 1rem 0;
       img {
@@ -669,12 +733,6 @@ export default {
         font-size: 0.775rem;
         font-weight: 500;
       }
-    }
-
-    .card-importance {
-      position: absolute;
-      right: 20px;
-      top: 10px;
     }
   }
 }

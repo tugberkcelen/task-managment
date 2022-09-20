@@ -32,7 +32,14 @@ const updateListForTrello = (payload) => {
   );
 };
 
-//   --url 'https://api.trello.com/1/lists/{id}?key=APIKey&token=APIToken'
+const deleteListForTrello = (payload) => {
+  console.log("payload", payload);
+  return axios.put(
+    `${process.env.TRELLO_URL}/lists/${payload}/closed?value=true&key=${process.env.TRELLO_KEY}&token=${process.env.TRELLO_TOKEN}`
+  );
+};
+
+// --url 'https://api.trello.com/1/lists/{id}/closed?key=APIKey&token=APIToken'
 
 // Card services
 
@@ -62,4 +69,5 @@ module.exports = {
   updateCardForTrello,
   updateBoardForTrello,
   updateListForTrello,
+  deleteListForTrello,
 };

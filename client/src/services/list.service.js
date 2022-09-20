@@ -27,3 +27,11 @@ export const updateListById = (payload) => {
     })
     .catch((err) => [err]);
 };
+
+export const deleteListById = (payload) => {
+  console.log("deletelist", payload);
+  return axios.delete(
+    `/list/deleteListById/${payload.list._id}/idListTrello/${payload.idListTrello}`,
+    payload.idListTrello
+  );
+};

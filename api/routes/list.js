@@ -24,7 +24,7 @@ router.patch(
 );
 
 // deleteListById
-router.delete("/deleteListById/:id", deleteList);
+router.delete("/deleteListById/:id/idListTrello/:idListTrello", deleteList);
 
 // getSingleListByIdboard
 router.get("/getSingleListByIdboard/:id", getSingleListByIdboard);
