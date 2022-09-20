@@ -8,3 +8,22 @@ export const getSingleListByIdboard = (payload) => {
     })
     .catch((err) => [err]);
 };
+
+export const createList = (payload) => {
+  return axios
+    .post(`/list/createList/`, payload)
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => [err]);
+};
+
+export const updateListById = (payload) => {
+  console.log("update", payload);
+  return axios
+    .patch(`/list/updateListById/${payload._id}`, payload)
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => [err]);
+};

@@ -1,6 +1,10 @@
 <script>
 import { getSingleBoardById } from "@/services/board.service.js";
-import { getSingleListByIdboard } from "@/services/list.service.js";
+import {
+  getSingleListByIdboard,
+  createList,
+  updateListById,
+} from "@/services/list.service.js";
 import {
   getSingleCardByIdBoard,
   createCard,
@@ -10,6 +14,7 @@ import {
 import PageHeader from "@/components/shared/PageHeader.vue";
 import TBtn from "@/components/FormComponents/T-Btn.vue";
 import TextField from "@/components/FormComponents/TextField.vue";
+
 import TSelect from "@/components/FormComponents/T-Select.vue";
 import Badge from "@/components/shared/Badge.vue";
 import draggable from "vuedraggable";
@@ -45,9 +50,18 @@ export default {
           preview: "",
         },
       },
-      addOrUpdateCardDialogPopup: false,
+      createListData: {
+        name: "",
+        desc: "",
+        idBoard: "",
+        idBoardTrello: "",
+      },
+      createOrUpdateOrDialogCardDialogPopup: false,
+      createOrUpdateOrDeleteListDialogPopup: false,
       deleteCardDialog: false,
-      createOrUpdateOrDelete: "",
+      deleteListDialog: false,
+      createOrUpdateOrDeleteCard: "",
+      createOrUpdateOrDeleteList: "",
       importances: [
         {
           key: "low",
@@ -89,8 +103,8 @@ export default {
 
     // createCardPopup
     createCardPopup(list) {
-      this.createOrUpdateOrDelete = "create";
-      this.addOrUpdateCardDialogPopup = true;
+      this.createOrUpdateOrDeleteCard = "create";
+      this.createOrUpdateOrDialogCardDialogPopup = true;
       this.list._id = list._id;
       this.list.idListTrello = list.idListTrello;
       this.card.name = "";
@@ -136,9 +150,9 @@ export default {
       });
     },
 
-    // createCard
-    async createCard() {
-      if (this.createOrUpdateOrDelete == "create") {
+    // createOrUpdateOrDeleteCardFunc
+    async createOrUpdateOrDeleteCardFunc() {
+      if (this.createOrUpdateOrDeleteCard == "create") {
         const data = new FormData();
         data.append("name", this.card.name);
         data.append("desc", this.card.desc);
@@ -152,8 +166,8 @@ export default {
           ? data.append("image", this.card.image.file)
           : "";
         await createCard(data);
-        this.popupClosed();
-      } else if (this.createOrUpdateOrDelete == "update") {
+        this.cardPopupClosed();
+      } else if (this.createOrUpdateOrDeleteCard == "update") {
         await this.editCard();
         this.list.idListTrello = this.card.idListTrello;
         const data = new FormData();
@@ -169,18 +183,18 @@ export default {
           ? data.append("image", this.card.image.file)
           : "";
         await updateCardById({ data: data, id: this.card._id });
-        this.popupClosed();
+        this.cardPopupClosed();
       } else {
         await deleteCardById(this.card);
-        this.popupClosed();
+        this.cardPopupClosed();
       }
     },
 
-    // popupClosed
-    async popupClosed() {
-      this.addOrUpdateCardDialogPopup = false;
+    // cardPopupClosed
+    async cardPopupClosed() {
+      this.createOrUpdateOrDialogCardDialogPopup = false;
       this.deleteCardDialog = false;
-      if (this.createOrUpdateOrDelete == "create") {
+      if (this.createOrUpdateOrDeleteCard == "create") {
         this.card.name = "";
         this.card.desc = "";
         this.card.idBoard = "";
@@ -195,20 +209,17 @@ export default {
 
     //editCard
     editCard(payload) {
-      if (payload) {
-        this.card = payload.card;
-        this.list._id = payload.list._id;
-        this.list.idListTrello = payload.list.idListTrello;
-        this.createOrUpdateOrDelete = "update";
-        this.addOrUpdateCardDialogPopup = true;
-      }
-      console.log("newPayload", this.list);
+      this.card = payload.card;
+      this.list._id = payload.list._id;
+      this.list.idListTrello = payload.list.idListTrello;
+      this.createOrUpdateOrDeleteCard = "update";
+      this.createOrUpdateOrDialogCardDialogPopup = true;
     },
 
     // deleteCardDialogFunc
     deleteCardDialogFunc(card) {
       this.card = card;
-      this.createOrUpdateOrDelete = "delete";
+      this.createOrUpdateOrDeleteCard = "delete";
       this.deleteCardDialog = true;
     },
 
@@ -217,12 +228,54 @@ export default {
       this.deleteCardDialog = false;
       await getSingleCardByIdBoard();
     },
+
+    // listCardPopup
+    listCardPopup() {
+      this.createOrUpdateOrDeleteList = "create";
+      this.createOrUpdateOrDeleteListDialogPopup = true;
+      this.createListData._id = "";
+      this.createListData.name = "";
+      this.createListData.desc = "";
+      this.createListData.idBoard = "";
+      this.createListData.idListTrello = "";
+    },
+
+    // listPopupClosed
+    async listPopupClosed() {
+      this.createOrUpdateOrDeleteListDialogPopup = false;
+      this.deleteListDialog = false;
+      await this.getSingleListByIdboard();
+    },
+
+    // createOrUpdateOrDeleteListFunc
+    async createOrUpdateOrDeleteListFunc() {
+      if (this.createOrUpdateOrDeleteList == "create") {
+        this.createListData.idBoard = this.$route.params.id;
+        this.createListData.idBoardTrello = this.board.idBoardTrello;
+        await createList(this.createListData);
+        this.listPopupClosed();
+      } else if (this.createOrUpdateOrDeleteList == "update") {
+        await updateListById(this.createListData);
+        this.listPopupClosed();
+      }
+    },
+
+    // editList
+    editList(payload) {
+      this.createListData = payload;
+      this.createOrUpdateOrDeleteList = "update";
+      this.createOrUpdateOrDeleteListDialogPopup = true;
+    },
   },
 };
 </script>
 <template>
   <div class="board-details-view">
-    <PageHeader :title="this.board.name" />
+    <PageHeader :title="this.board.name">
+      <template #pageHeaderButton>
+        <TBtn @click="listCardPopup" color="primary"> Liste ekle </TBtn>
+      </template>
+    </PageHeader>
     <Dialog
       class="card-accepted-for-delete"
       v-if="deleteCardDialog"
@@ -238,14 +291,23 @@ export default {
           <TBtn @click="cancelDeleteCard" styled="outlined" color="primary">
             İptal Et
           </TBtn>
-          <TBtn @click="createCard" styled="filled" color="primary"> Sil </TBtn>
+          <TBtn
+            @click="createOrUpdateOrDeleteCardFunc"
+            styled="filled"
+            color="primary"
+          >
+            Sil
+          </TBtn>
         </div>
       </template>
     </Dialog>
     <!-- .add-card-dialog start -->
-    <Dialog v-if="addOrUpdateCardDialogPopup" class="add-card-dialog">
+    <Dialog
+      v-if="createOrUpdateOrDialogCardDialogPopup"
+      class="add-card-dialog"
+    >
       <template #title>
-        <h4 v-if="createOrUpdateOrDelete == 'create'">Kart Ekle</h4>
+        <h4 v-if="createOrUpdateOrDeleteCard == 'create'">Kart Ekle</h4>
         <h4 v-else>Kart Düzenle</h4>
       </template>
       <template #content>
@@ -280,7 +342,7 @@ export default {
         </div>
         <!-- .form-group finish -->
         <!-- .form-group start -->
-        <div v-if="createOrUpdateOrDelete == 'update'" class="form-group">
+        <div v-if="createOrUpdateOrDeleteCard == 'update'" class="form-group">
           <TSelect
             v-model="card.idList"
             :items="lists"
@@ -327,7 +389,7 @@ export default {
           <!-- .image-preview start -->
           <div
             v-if="
-              card.image.preview != '' && createOrUpdateOrDelete == 'update'
+              card.image.preview != '' && createOrUpdateOrDeleteCard == 'update'
             "
             class="image-preview preview-1"
           >
@@ -352,18 +414,79 @@ export default {
         </div>
       </template>
       <template #footer>
-        <TBtn @click="popupClosed" styled="outlined" color="primary">
+        <TBtn @click="cardPopupClosed" styled="outlined" color="primary">
           Kapat
         </TBtn>
         <TBtn
-          v-if="createOrUpdateOrDelete == 'create'"
-          @click="createCard"
+          v-if="createOrUpdateOrDeleteCard == 'create'"
+          @click="createOrUpdateOrDeleteCardFunc"
           styled="filled"
           color="primary"
         >
           Ekle
         </TBtn>
-        <TBtn v-else @click="createCard" styled="filled" color="primary">
+        <TBtn
+          v-else
+          @click="createOrUpdateOrDeleteCardFunc"
+          styled="filled"
+          color="primary"
+        >
+          Güncelle
+        </TBtn>
+      </template>
+    </Dialog>
+    <!-- .add-card-dialog finish -->
+    <!-- .add-card-dialog start -->
+    <Dialog
+      v-if="createOrUpdateOrDeleteListDialogPopup"
+      class="add-card-dialog"
+    >
+      <template #title>
+        <h4 v-if="createOrUpdateOrDeleteCard == 'create'">
+          Liste Elemanı Ekle
+        </h4>
+        <h4 v-else>Liste Elemanı Düzenle</h4>
+      </template>
+      <template #content>
+        <!-- .form-group start -->
+        <div class="form-group">
+          <TextField
+            type="text"
+            v-model="createListData.name"
+            label="Liste Adı"
+            color="primary"
+          />
+        </div>
+        <!-- .form-group finish -->
+        <!-- .form-group start -->
+        <div class="form-group">
+          <TextField
+            type="text"
+            v-model="createListData.desc"
+            label="Liste Açıklaması"
+            color="primary"
+          />
+        </div>
+        <!-- .form-group finish -->
+      </template>
+      <template #footer>
+        <TBtn @click="listPopupClosed" styled="outlined" color="primary">
+          Kapat
+        </TBtn>
+        <TBtn
+          v-if="createOrUpdateOrDeleteList == 'create'"
+          @click="createOrUpdateOrDeleteListFunc"
+          styled="filled"
+          color="primary"
+        >
+          Ekle
+        </TBtn>
+        <TBtn
+          v-else
+          @click="createOrUpdateOrDeleteListFunc"
+          styled="filled"
+          color="primary"
+        >
           Güncelle
         </TBtn>
       </template>
@@ -378,11 +501,32 @@ export default {
         class="list-box"
         :style="{ width: `calc(100% / ${lists.length})` }"
       >
-        <h6 class="list-title">
-          {{ list.name }}<br />
-          id=> {{ list._id }} <br />
-          idListTrello => {{ list.idListTrello }}
-        </h6>
+        <!-- .list-title start -->
+        <h6 class="list-title">{{ list.name }}<br /></h6>
+        <!-- .list-title finish -->
+        <!-- .list-actions-button start -->
+        <div class="list-actions-button dual-button">
+          <TBtn
+            @click="editList(list)"
+            class="circle"
+            width="35"
+            height="35"
+            color="information"
+          >
+            <i class="fad fa-edit"></i>
+          </TBtn>
+          <TBtn
+            @click="deleteCardDialogFunc(card)"
+            class="circle"
+            width="35"
+            height="35"
+            color="error"
+          >
+            <i class="fad fa-trash-alt"></i>
+          </TBtn>
+        </div>
+        <!-- .list-actions-button start -->
+
         <!-- .card-wrapper start -->
         <div class="card-wrapper">
           <!-- .card start -->
@@ -464,9 +608,16 @@ export default {
     padding: 1rem;
     box-sizing: border-box;
     height: fit-content;
+    position: relative;
 
     .list-title {
       margin-bottom: 20px;
+    }
+
+    .list-actions-button {
+      position: absolute;
+      right: 20px;
+      top: 5px;
     }
   }
 }

@@ -10,6 +10,10 @@ const updateListValidation = Joi.object({
   name: Joi.string().required(),
   desc: Joi.string().required(),
   idBoard: Joi.required(),
+  _id: Joi.required(),
+  idListTrello: Joi.required(),
+  createdAt: Joi.string(),
+  updatedAt: Joi.string(),
 });
 
 module.exports = {
