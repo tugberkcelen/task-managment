@@ -71,13 +71,16 @@ const getSingleCardByIdBoard = async (req, res) => {
 // updateCard
 const updateCard = async (req, res) => {
   if (req.files === null) {
+    req.body["image"] = "";
+    console.log("burda", req.body);
     return await updateCardForTrello(req.body).then((response) => {
-      console.log("response", response);
-      Card.findByIdAndUpdate(req.params.id, req.body, { new: true })
+      Card.findByIdAndUpdate(req.params.id, { $set: req.body })
         .then((response) => {
+          console.log("response", response);
           res.status(httpStatus.OK).json(response);
         })
         .catch((e) => {
+          console.log("e", e);
           res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ error: e });
         });
     });

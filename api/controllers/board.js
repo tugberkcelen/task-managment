@@ -1,6 +1,9 @@
 const Board = require("../models/Board");
 const httpStatus = require("http-status");
-const { createBoardForTrello } = require("../trelloServices/services");
+const {
+  createBoardForTrello,
+  updateBoardForTrello,
+} = require("../trelloServices/services");
 
 // getAllBoard
 const getAllBoard = async (req, res) => {
@@ -48,15 +51,25 @@ const updateBoard = async (req, res) => {
       message: "id is required",
     });
   }
-  return Board.findByIdAndUpdate(req.params.id, req.body)
+  return await updateBoardForTrello(req.body)
     .then((response) => {
-      res.status(httpStatus.OK).json(response);
+      return Board.findByIdAndUpdate(req.params.id, req.body)
+        .then((response) => {
+          res.status(httpStatus.OK).json(response);
+        })
+        .catch((e) => {
+          console.log("ee", e);
+          res
+            .status(httpStatus.INTERNAL_SERVER_ERROR)
+            .json({ error: "something went wrong" });
+        });
     })
-    .catch((e) =>
+    .catch((e) => {
+      console.log("ee", e);
       res
         .status(httpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error: "something went wrong" })
-    );
+        .json({ error: "something went wrong" });
+    });
 };
 
 // deleteBoard

@@ -165,7 +165,7 @@ export default {
         data.append("idList", this.card.idList);
         data.append("idListTrello", this.list.idListTrello);
         data.append("idCardTrello", this.card.idCardTrello);
-        this.card.image?.file.name
+        this.card.image?.file?.name
           ? data.append("image", this.card.image.file)
           : "";
         await updateCardById({ data: data, id: this.card._id });
@@ -325,7 +325,12 @@ export default {
           </div>
           <!-- .image-preview finish -->
           <!-- .image-preview start -->
-          <div v-if="card.image?.preview" class="image-preview preview-1">
+          <div
+            v-if="
+              card.image.preview != '' && createOrUpdateOrDelete == 'update'
+            "
+            class="image-preview preview-1"
+          >
             <!-- .remove-image start -->
             <TBtn
               @click="removeEditedImage"
